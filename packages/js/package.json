@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "@bearer/js",
-  "version": "1.13.8",
+  "version": "1.13.9",
   "description": "A JavaScript library for working with Bearer integrations",
   "jsdelivr": "lib/bearer.production.min.js",
   "unpkg": "lib/bearer.production.min.js",
