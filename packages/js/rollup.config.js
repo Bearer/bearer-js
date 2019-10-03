@@ -17,7 +17,7 @@ const plugins = [
   }),
   commonjs(),
   typescript({
-    exclude: ['**/__tests__/**', '**/node_modules/**']
+    tsconfig: 'tsconfig.build.json'
   }),
   filesize({
     showMinifiedSize: isProduction,
@@ -87,4 +87,4 @@ const distributionBundles = [
     }
   })
 ].concat(bundles)
-export default (isProduction ? distributionBundles : bundles)
+export default isProduction ? distributionBundles : bundles
