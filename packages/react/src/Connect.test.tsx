@@ -1,8 +1,13 @@
 import * as React from 'react'
-import { render, fireEvent } from 'react-testing-library'
+import { render, fireEvent, waitForElement } from '@testing-library/react'
 
 const integration = 'my-dummy-integration'
-const connect = jest.fn((_one, _two, { authId }) => Promise.resolve({ integration, authId: authId || 'random' }))
+const connect = jest.fn((_one, _two, { authId }) => {
+  if (authId === 'failure') {
+    return Promise.reject({ integration, authId })
+  }
+  return Promise.resolve({ integration, authId: authId || 'random' })
+})
 
 jest.mock('./bearer-provider', () => {
   const BearerContext = React.createContext<any>({ bearer: { connect } })
@@ -12,76 +17,55 @@ jest.mock('./bearer-provider', () => {
 import Connect from './Connect'
 
 describe('Connect', () => {
-  // afterEach(cleanup)
+  beforeEach(() => {
+    connect.mockClear()
+  })
+
   describe('when success authentication', () => {
-    const success = jest.fn()
-    const { getByText, container } = renderConnect({
-      success,
-      integration,
-      setup: 'my-dummy-setup',
-      authId: 'my-dummy-auth-id'
-    })
+    test('it renders Click button', async () => {
+      const success = jest.fn()
+      const { getByText } = renderConnect({ success, integration })
 
-    beforeAll(() => {
+      expect(getByText('Click')).not.toBeNull()
       fireEvent.click(getByText(/Click/i))
-    })
 
-    it('uses render prop', () => {
-      expect(container).toMatchSnapshot()
-    })
-
-    it('calls connect with props provided', () => {
-      expect(connect).toHaveBeenCalledWith(integration, 'my-dummy-setup', { authId: 'my-dummy-auth-id' })
-    })
-
-    it('calls success', () => {
-      expect(success).toHaveBeenCalledWith({ integration: 'my-dummy-integration', authId: 'my-dummy-auth-id' })
+      expect(connect).toHaveBeenCalledWith(integration, 'my-setup', { authId: 'auth-id' })
+      // next tick
+      await waitForElement(() => getByText(/Click/i))
+      expect(success).toHaveBeenCalledWith({ authId: 'auth-id', integration: 'my-dummy-integration' })
     })
   })
 
-  describe('when error during authentication', () => {
-    const success = jest.fn()
-    const error = jest.fn()
+  describe('when failing authentication', () => {
+    test('it renders Click button', async () => {
+      const success = jest.fn()
+      const onError = jest.fn()
 
-    const { getByText, container } = renderConnect({
-      success,
-      text: 'Click Fail',
-      onError: error
-    })
+      const { getByText } = renderConnect({ success, onError, authId: 'failure' })
 
-    beforeAll(() => {
-      connect.mockReset()
-      connect.mockImplementation(() => {
-        return Promise.reject(false)
-      })
-      fireEvent.click(getByText(/Click Fail/i))
-    })
+      expect(getByText('Click')).not.toBeNull()
+      fireEvent.click(getByText(/Click/i))
 
-    it('uses render prop', () => {
-      expect(container).toMatchSnapshot()
-    })
+      expect(connect).toHaveBeenCalledWith('dummy', 'my-setup', { authId: 'failure' })
 
-    it('does not call success', () => {
+      await waitForElement(() => getByText(/Failure retry/i))
+
       expect(success).not.toHaveBeenCalled()
-    })
-
-    it('calls connect with props provided', () => {
-      expect(connect).toHaveBeenCalledWith('dummy', 'my-setup', { authId: 'auth-id' })
-    })
-
-    it('calls onError', () => {
-      expect(error).toHaveBeenCalledWith({ error: false, authId: 'auth-id', integration: 'dummy' })
+      expect(onError).toHaveBeenCalledWith({
+        authId: 'failure',
+        error: { authId: 'failure', integration: 'my-dummy-integration' },
+        integration: 'dummy'
+      })
     })
   })
 })
 
 function renderConnect({
-  text = 'Click',
   success = jest.fn(),
   integration = 'dummy',
   setup = 'my-setup',
   authId = 'auth-id',
-  onError
+  onError = jest.fn()
 }: any) {
   return render(
     <Connect
@@ -90,7 +74,9 @@ function renderConnect({
       onSuccess={success}
       onError={onError}
       authId={authId}
-      render={({ connect }) => <button onClick={connect}>{text}</button>}
+      render={({ connect, error }) =>
+        !error ? <button onClick={connect}>Click</button> : <button onClick={connect}>Failure retry</button>
+      }
     />
   )
 }

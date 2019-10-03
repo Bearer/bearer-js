@@ -10,15 +10,13 @@ exports[`withInvoke Wrapped Component renders the wrapped component adn forward 
 
 exports[`withInvoke invoke behaviours forwards data when failure 1`] = `
 <div>
-  Error: 
-  data error
+  Loading
 </div>
 `;
 
 exports[`withInvoke invoke behaviours forwards data when success 1`] = `
 <div>
-  Some data passed: 
-  Sponge bob is alive
+  Loading
 </div>
 `;
 
