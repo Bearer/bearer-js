@@ -28,7 +28,8 @@ export default bearer
 Object.defineProperty(bearer, 'instance', {
   get: function(this: TBearer) {
     if (!this._instance) {
-      logMissingInstance()
+      // disable warning until we need it back
+      // logMissingInstance()
       this._instance = new Bearer(undefined)
     }
     return this._instance

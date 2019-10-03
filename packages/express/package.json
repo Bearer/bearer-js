@@ -10,7 +10,7 @@
   ],
   "author": "Bearer Team<engineering@bearer.sh>",
   "repository": "Bearer/bearer",
-  "homepage": "https://github.com/Bearer/bearer/packages/express#readme",
+  "homepage": "https://github.com/Bearer/bearer-js/tree/master/packages/express#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/npm/v/@bearer/js.svg)](https://npmjs.org/package/@bearer/js)
 ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@bearer/js.svg)
 [![Downloads/week](https://img.shields.io/npm/dw/@bearer/js.svg)](https://npmjs.org/package/@bearer/js)
-[![License](https://img.shields.io/npm/l/@bearer/js.svg)](https://github.com/Bearer/bearer/packages/cli/blob/master/package.json)
+![NPM](https://img.shields.io/npm/l/@bearer/js)
 
 The hassle-free way to use bearer's integrations into any web application
 
@@ -64,11 +64,10 @@ slack
 // passing extra arguments
 slack
   .auth(authId)
-  .post('/reminders.add', { text: 'Remind me something', time: 'in 10 seconds'})
+  .post('/reminders.add', { text: 'Remind me something', time: 'in 10 seconds' })
   .then(console.log)
   .catch(console.error)
 ```
-
 
 ### Invoke js
 

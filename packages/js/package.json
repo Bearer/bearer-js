@@ -10,7 +10,7 @@
   "types": "lib/cjs/index.d.ts",
   "module": "lib/es/index.js",
   "repository": "Bearer/bearer",
-  "homepage": "https://github.com/Bearer/bearer/packages/js#readme",
+  "homepage": "https://github.com/Bearer/bearer-js/tree/master/packages/js#readme",
   "author": "Bearer Team<engineering@bearer.sh>",
   "license": "MIT",
   "files": [

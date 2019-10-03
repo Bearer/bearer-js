@@ -4,7 +4,7 @@
 ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@bearer/react.svg)
 ![node (scoped)](https://img.shields.io/node/v/@bearer/node.svg)
 [![Downloads/week](https://img.shields.io/npm/dw/@bearer/react.svg)](https://npmjs.org/package/@bearer/react)
-[![License](https://img.shields.io/npm/l/@bearer/react.svg)](https://github.com/Bearer/bearer/packages/react/blob/master/package.json)
+![NPM](https://img.shields.io/npm/l/@bearer/react)
 
 React tooling for bearer.sh components
 
@@ -94,7 +94,7 @@ function DisplayComponent(props: TProps) {
   }
 
   const invoke = () => {
-    props.invoke({query: { authId: 'AUTH_ID'}})
+    props.invoke({ query: { authId: 'AUTH_ID' } })
   }
 
   return (

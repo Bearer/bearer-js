@@ -1,10 +1,10 @@
 # `@bearer/node`
 
-[![Version](https://img.shields.io/npm/v/@bearer/logger.svg)](https://npmjs.org/package/@bearer/logger)
-![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@bearer/logger.svg)
+[![Version](https://img.shields.io/npm/v/@bearer/node.svg)](https://npmjs.org/package/@bearer/node)
+![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@bearer/node.svg)
 ![node (scoped)](https://img.shields.io/node/v/@bearer/node.svg)
-[![Downloads/week](https://img.shields.io/npm/dw/@bearer/logger.svg)](https://npmjs.org/package/@bearer/logger)
-[![License](https://img.shields.io/npm/l/@bearer/logger.svg)](https://github.com/Bearer/bearer/packages/logger/blob/master/package.json)
+[![Downloads/week](https://img.shields.io/npm/dw/@bearer/node.svg)](https://npmjs.org/package/@bearer/node)
+![NPM](https://img.shields.io/npm/l/@bearer/node)
 
 Node client to query any APIs and custom functions using [Bearer.sh](https://www.bearer.sh)
 
@@ -57,7 +57,7 @@ console.log(response)
 
 By default bearer client times out after 5 seconds. Bearer allows to increase the timeout to up to 30 seconds
 
-``` tsx
+```tsx
 import bearer from '@bearer/node'
 
 const client = bearer(process.env.BEARER_SECRET_KEY, { timeout: 10 * 1000 }) // sets the timeout to 10 seconds
@@ -67,7 +67,6 @@ github
   .invoke('myFunction')
   .then(console.log)
   .catch(console.error)
-
 ```
 
 [Learn more](https://docs.bearer.sh/working-with-bearer/manipulating-apis) on how to use custom functions with Bearer.sh.

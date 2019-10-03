@@ -1,10 +1,9 @@
 # `@bearer/express`
 
-
 [![Version](https://img.shields.io/npm/v/@bearer/express.svg)](https://npmjs.org/package/@bearer/express)
 ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@bearer/express.svg)
 [![Downloads/week](https://img.shields.io/npm/dw/@bearer/express.svg)](https://npmjs.org/package/@bearer/express)
-[![License](https://img.shields.io/npm/l/@bearer/express.svg)](https://github.com/Bearer/bearer/packages/cli/blob/master/package.json)
+![NPM](https://img.shields.io/npm/l/@bearer/express)
 
 > TODO: description
 
@@ -44,4 +43,3 @@ const webhookHandlers = {
 
 app.use('/webhooks', bearerWebhooks(webhookHandlers, { token: 'ENCRYPTION_KEY' })) // Copy and Paste you Encryption Key
 ```
-
