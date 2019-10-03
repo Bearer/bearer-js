@@ -29,7 +29,7 @@ Object.defineProperty(bearer, 'instance', {
   get: function(this: TBearer) {
     if (!this._instance) {
       // disable warning until we need it back
-      // logMissingInstance()
+      logMissingInstance()
       this._instance = new Bearer(undefined)
     }
     return this._instance
@@ -60,7 +60,5 @@ const MISSING_INSTANCE_STYLE = 'font-weight:bold;'
 function logMissingInstance() {
   if (debug.enabled) {
     debug.extend('main')(MISSING_INSTANCE_MEESSAGE, MISSING_INSTANCE_STYLE)
-  } else {
-    console.warn(MISSING_INSTANCE_MEESSAGE, MISSING_INSTANCE_STYLE)
   }
 }
