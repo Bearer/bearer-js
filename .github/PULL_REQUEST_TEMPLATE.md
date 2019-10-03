@@ -8,18 +8,10 @@
 
 <!--
   Uncomment the ones concerned
-- @bearer/cli
-- @bearer/core
-- create-bearer
-- @bearer/functions
-- @bearer/legacy-cli
+- @bearer/express
 - @bearer/js
-- @bearer/openapi-generator
+- @bearer/node
 - @bearer/react
-- @bearer/transpiler
-- @bearer/tslint-config
-- @bearer/types
-- @bearer/ui
 - none
 - all
  -->
