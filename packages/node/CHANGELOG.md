@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.8](https://github.com/Bearer/bearer/compare/v1.13.7...v1.13.8) (2019-10-03)
+
+
+### Bug Fixes
+
+* dependencies and build ([3b8be9a](https://github.com/Bearer/bearer/commit/3b8be9a))
+
+
+
+
+
 ## [1.13.7](https://github.com/Bearer/bearer/compare/v1.13.6...v1.13.7) (2019-10-03)
 
 **Note:** Version bump only for package @bearer/node

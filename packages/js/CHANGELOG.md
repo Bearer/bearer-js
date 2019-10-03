@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.8](https://github.com/Bearer/bearer/compare/v1.13.7...v1.13.8) (2019-10-03)
+
+
+### Bug Fixes
+
+* dependencies and build ([3b8be9a](https://github.com/Bearer/bearer/commit/3b8be9a))
+* disable console warn ([d01c41a](https://github.com/Bearer/bearer/commit/d01c41a))
+
+
+
+
+
 ## [1.13.5](https://github.com/Bearer/bearer/compare/v1.13.4...v1.13.5) (2019-09-30)
 
 ### Bug Fixes
