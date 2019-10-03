@@ -2,21 +2,10 @@
 
 This repository contains
 
-- [@bearer/cli](./packages/cli)
-- [@bearer/core](./packages/core)
-- [create-bearer](./packages/create-bearer)
-- [@bearer/functions](./packages/functions)
-- [@bearer/bearer-cli](./packages/legacy-cli)
-- [@bearer/logger](./packages/logger)
+- [@bearer/express](./packages/express)
+- [@bearer/js](./packages/js)
 - [@bearer/node](./packages/node)
-- [@bearer/package-init](./packages/package-init)
 - [@bearer/react](./packages/react)
-- [@bearer/security](./packages/security)
-- [@bearer/transpiler](./packages/transpiler)
-- [@bearer/tsconfig](./packages/tsconfig)
-- [@bearer/tslint-config](./packages/tslint-config)
-- [@bearer/types](./packages/types)
-- [@bearer/ui](./packages/ui)
 
 ## How to get Started
 
@@ -74,41 +63,14 @@ Using conventional commits allow us (through lerna) to generate automatically th
 
 Sometimes you need to test locally your changes before publishing anything. Here's some tips you can use.
 
-**CLI**
-
-- Let's link and build the CLI
-
-```
-cd packages/cli
-yarn link
-yarn build -w # starts TS compiler with watch mode enabled
-```
-
-- then within your integration
-
-```
-yarn link @bearer/cli
-yarn bearer start # will use the local version you previously linked
-```
-
-At this point you are using your local cli build.
-
-if you want to generate a new integration from you local build then you can run
-
-```bash
-/path/bearer/repo/packages/cli/lib/bin/index.js new IntegrationName
-```
-
-**Other packages**
-
 If you want to use these packages in a local environment (in repositories not contained in this one)
 
-_assuming we have a package named "@bearer/core"_
+_assuming we have a package named "@bearer/node"_
 
 ```bash
-lerna exec yarn link --scope='@bearer/core'
+lerna exec yarn link --scope='@bearer/node'
 
 // somewhere else on you computer inside a integration, for example
 
-yarn link '@bearer/core'
+yarn link '@bearer/node'
 ```

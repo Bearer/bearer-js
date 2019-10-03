@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { render, fireEvent, cleanup } from 'react-testing-library'
+import { render, fireEvent } from 'react-testing-library'
 
 const integration = 'my-dummy-integration'
 const connect = jest.fn((_one, _two, { authId }) => Promise.resolve({ integration, authId: authId || 'random' }))

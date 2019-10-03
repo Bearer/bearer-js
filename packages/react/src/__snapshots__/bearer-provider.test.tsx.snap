@@ -4,7 +4,7 @@ exports[`BearerProvider allow custom integration host 1`] = `
 <Context.Provider
   value={
     Object {
-      "bearer": Bearer {
+      "bearer": e {
         "clientId": "abc123",
         "config": Object {
           "domObserver": true,
@@ -48,7 +48,7 @@ exports[`BearerProvider renders basic provider tag 1`] = `
 <Context.Provider
   value={
     Object {
-      "bearer": Bearer {
+      "bearer": e {
         "clientId": "abc123",
         "config": Object {
           "domObserver": true,

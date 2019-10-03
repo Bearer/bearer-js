@@ -28,6 +28,7 @@
     "@types/react-test-renderer": "^16.0.3",
     "jest": "^24.7.1",
     "react": "^16.6.0-0",
+    "react-dom": "^16.10.1",
     "react-test-renderer": "^16.6.3",
     "react-testing-library": "^6.0.0",
     "ts-jest": "^24.0.1",
@@ -35,7 +36,8 @@
   },
   "peerDependencies": {
     "@bearer/js": ">=0.107.0",
-    "react": "^16.6.0-0"
+    "react": "^16.6.0-0",
+    "react-dom": "^16.10.1"
   },
   "dependencies": {
     "case": "^1.6.1",

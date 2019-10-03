@@ -1,5 +1,5 @@
 {
-  "name": "bearer-master",
+  "name": "bearer-js-master",
   "private": true,
   "workspaces": {
     "packages": [
@@ -28,11 +28,10 @@
   },
   "scripts": {
     "clean": "lerna run clean",
-    "upgrade-stencil": "(lerna clean --scope=@bearer/ui --scope=@bearer/core --yes) && (lerna exec --scope=@bearer/ui --scope=@bearer/core yarn install) && (lerna exec --scope=@bearer/ui --scope=@bearer/core yarn remove @stencil/core)  && (lerna add --exact @stencil/core --scope=@bearer/ui --scope=@bearer/core ) && lerna bootstrap",
-    "lerna-publish": "lerna publish --conventional-commits  --registry=https://registry.npmjs.org/ --ignore=@bearer/ui",
-    "test": "lerna run test:ci --stream --ignore=@bearer/ui",
+    "lerna-publish": "lerna publish --conventional-commits  --registry=https://registry.npmjs.org/",
+    "test": "lerna run test:ci --stream",
     "cm": "git-cz",
-    "postinstall": "lerna run prepare --ignore=@bearer/ui && lerna link",
+    "postinstall": "lerna run prepare && lerna link",
     "drone:sign": "cross-env-shell DRONE_TOKEN=$TOKEN DRONE_SERVER=$SERVER \"sh scripts/sign.sh\"",
     "drone:lint": "drone lint",
     "drone:fmt": "drone fmt"
