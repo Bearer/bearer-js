@@ -9,7 +9,7 @@
     "bearer"
   ],
   "author": "Bearer Team<engineering@bearer.sh>",
-  "repository": "Bearer/bearer",
+  "repository": "Bearer/bearer-js",
   "homepage": "https://github.com/Bearer/bearer-js/tree/master/packages/express#readme",
   "license": "MIT",
   "main": "lib/index.js",
