@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "@bearer/express",
-  "version": "1.13.9",
+  "version": "1.13.10",
   "description": "Express webhook middleware",
   "keywords": [
     "node",
