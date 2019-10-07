@@ -3,16 +3,19 @@ import axios, { AxiosRequestConfig, AxiosInstance } from 'axios'
 const DEFAULT_TIMEOUT = 5 * 1000 // 5 seconds
 
 class Bearer {
-  protected readonly bearerApiKey: string
-  protected options: BearerClientOptions = { host: 'https://int.bearer.sh', timeout: DEFAULT_TIMEOUT }
+  protected readonly secretKey: string
+  protected options: BearerClientOptions = {
+    host: 'https://int.bearer.sh',
+    httpClientSettings: { timeout: DEFAULT_TIMEOUT }
+  }
 
-  constructor(bearerApiKey: string, options?: BearerClientOptions) {
+  constructor(secretKey: string, options?: BearerClientOptions) {
     this.options = { ...this.options, ...options }
-    this.bearerApiKey = bearerApiKey
+    this.secretKey = secretKey
   }
 
   public integration(integrationId: string) {
-    return new BearerClient(integrationId, this.options, this.bearerApiKey)
+    return new BearerClient(integrationId, this.options, this.secretKey)
   }
 }
 
@@ -22,21 +25,25 @@ class BearerClient {
   constructor(
     readonly integrationId: string,
     readonly options: BearerClientOptions,
-    readonly bearerApiKey: string,
+    readonly secretKey: string,
     readonly setupId?: string,
     readonly authId?: string
   ) {
+    if (this.options.timeout) {
+      console.warn('DEPRECATION WARNING: Please use `httpClientSettings`. `timeout` is deprecated')
+    }
     this.client = axios.create({
-      timeout: this.options.timeout || DEFAULT_TIMEOUT
+      timeout: this.options.timeout || DEFAULT_TIMEOUT,
+      ...this.options.httpClientSettings
     })
   }
 
   public auth = (authId: string) => {
-    return new BearerClient(this.integrationId, this.options, this.bearerApiKey, this.setupId, authId)
+    return new BearerClient(this.integrationId, this.options, this.secretKey, this.setupId, authId)
   }
 
   public setup = (setupId: string) => {
-    return new BearerClient(this.integrationId, this.options, this.bearerApiKey, setupId, this.authId)
+    return new BearerClient(this.integrationId, this.options, this.secretKey, setupId, this.authId)
   }
 
   public authenticate = this.auth // Alias
@@ -81,7 +88,7 @@ class BearerClient {
 
     const pkg = require('../package.json')
     const preheaders: BearerHeaders = {
-      Authorization: this.bearerApiKey,
+      Authorization: this.secretKey,
       'User-Agent': `Bearer-Node (${pkg.version})`,
       'Bearer-Auth-Id': this.authId!,
       'Bearer-Setup-Id': this.setupId!
@@ -131,7 +138,7 @@ interface BearerRequestParameters {
 }
 
 type BearerRequestOptions = any
-type BearerClientOptions = { host: string; timeout?: number }
+type BearerClientOptions = { host: string; timeout?: number; httpClientSettings: AxiosRequestConfig }
 
 /**
  * Errors handling
