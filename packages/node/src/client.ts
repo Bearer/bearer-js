@@ -96,7 +96,7 @@ class BearerClient {
 
     if (parameters && parameters.headers) {
       for (const key in parameters.headers) {
-        preheaders[`Bearer-Proxy-${key}`] = parameters.headers[key]
+        preheaders[key] = parameters.headers[key]
       }
     }
 
