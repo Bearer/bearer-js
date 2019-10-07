@@ -1,12 +1,12 @@
 import nock from 'nock'
 
 import clientFactory, { bearer } from './client'
-const apiKey = 'spongeBobApiKey'
+const secretKey = 'spongeBobApiKey'
 const okResponse = { ok: 'ok' }
 const distantApi = jest.fn(() => okResponse)
 
 describe('Bearer client', () => {
-  const client = clientFactory(apiKey)
+  const client = clientFactory(secretKey)
 
   beforeEach(() => {
     distantApi.mockClear()
@@ -40,14 +40,14 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
     }
 
     const mockRequest = ({ method, extraHeaders = {}, body }: IMockRequestParams) => {
-      nock('https://int.bearer.sh', {
+      nock('https://proxy.bearer.sh', {
         reqheaders: {
-          authorization: apiKey,
+          authorization: secretKey,
           ...headers,
           ...extraHeaders
         }
       })
-        .intercept(`/api/v4/functions/backend/${integrationName}/bearer-proxy/test`, method, body)
+        .intercept(`/${integrationName}/test`, method, body)
         .once()
         .query(query)
         .reply(200, distantApi)

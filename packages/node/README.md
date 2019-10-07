@@ -60,8 +60,8 @@ By default bearer client times out after 5 seconds. Bearer allows to increase th
 ```tsx
 import bearer from '@bearer/node'
 
-const client = bearer(process.env.BEARER_SECRET_KEY, { timeout: 10 * 1000 }) // sets the timeout to 10 seconds
-const github = client.integration('INTEGRATION_ID')
+const client = bearer(process.env.BEARER_SECRET_KEY, { httpClientSettings: { timeout: 10 * 1000 } }) // sets the timeout to 10 seconds
+const github = client.integration('INTEGRATION_ID', { httpClientSettings: { timeout: 1 } }) // sets the timeout to 1 second for this specific integration
 
 github
   .invoke('myFunction')

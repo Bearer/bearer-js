@@ -5,7 +5,7 @@ const DEFAULT_TIMEOUT = 5 * 1000 // 5 seconds
 class Bearer {
   protected readonly secretKey: string
   protected options: BearerClientOptions = {
-    host: 'https://int.bearer.sh',
+    host: 'https://proxy.bearer.sh',
     httpClientSettings: { timeout: DEFAULT_TIMEOUT }
   }
 
@@ -14,7 +14,13 @@ class Bearer {
     this.secretKey = secretKey
   }
 
-  public integration(integrationId: string) {
+  public integration(integrationId: string, httpClientSettings: AxiosRequestConfig = { timeout: DEFAULT_TIMEOUT }) {
+    if (this.options.httpClientSettings) {
+      this.options.httpClientSettings = { ...this.options.httpClientSettings, ...httpClientSettings }
+    } else {
+      this.options.httpClientSettings = httpClientSettings
+    }
+
     return new BearerClient(integrationId, this.options, this.secretKey)
   }
 }
@@ -110,7 +116,7 @@ class BearerClient {
     return this.client.request<TData>({
       method,
       headers,
-      baseURL: `${this.options.host}/api/v4/functions/backend/${this.integrationId}/bearer-proxy`,
+      baseURL: `${this.options.host}/${this.integrationId}`,
       url: endpoint,
       params: parameters && parameters.query,
       data: parameters && parameters.body
