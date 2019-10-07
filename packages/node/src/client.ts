@@ -14,19 +14,6 @@ class Bearer {
   public integration(integrationId: string) {
     return new BearerClient(integrationId, this.options, this.bearerApiKey)
   }
-
-  /**
-   * Deprecated. Please use integration(...).invoke(...) instead
-   */
-
-  public invoke(
-    integrationId: string,
-    functionName: string,
-    { query, body }: { query?: any; body?: any } = { query: {}, body: {} }
-  ) {
-    const instance = new BearerClient(integrationId, this.options, this.bearerApiKey)
-    return instance.invoke(functionName, { query, body })
-  }
 }
 
 class BearerClient {
@@ -126,26 +113,6 @@ class BearerClient {
       url: endpoint,
       params: parameters && parameters.query,
       data: parameters && parameters.body
-    })
-  }
-
-  /**
-   * Invoke custom functions
-   */
-
-  public invoke = <DataReturned = any>(
-    functionName: string,
-    { query, body }: { query?: any; body?: any } = { query: {}, body: {} }
-  ) => {
-    return this.client.request<DataReturned>({
-      baseURL: `${this.options.host}/api/v4/functions/backend/${this.integrationId}`,
-      url: `/${functionName}`,
-      headers: {
-        Authorization: this.bearerApiKey
-      },
-      method: 'post',
-      data: body,
-      params: query
     })
   }
 }

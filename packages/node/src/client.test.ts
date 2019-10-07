@@ -25,23 +25,6 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
     )
   })
 
-  describe('#invoke', () => {
-    it('send request to the function', async () => {
-      nock('https://int.bearer.sh', {
-        reqheaders: {
-          authorization: apiKey
-        }
-      })
-        .post('/api/v4/functions/backend/12345-integration-name/functionName')
-        .reply(200, distantApi)
-
-      const { data } = await client.invoke('12345-integration-name', 'functionName')
-
-      expect(distantApi).toHaveBeenCalled()
-      expect(data).toEqual(okResponse)
-    })
-  })
-
   describe('#integration', () => {
     const pkg = require('../package.json')
     const integrationName = '12345'
