@@ -48,7 +48,7 @@ describe('requests', () => {
   beforeAll(() => {
     console.log(`Running @bearer/node@${installedPkg.version}`)
   })
-  const api = bearer('sk_production_d1zTnXpHIudTiVFYp3CnC7wE16NdFvCi', {
+  const api = bearer('sk_production_removed', {
     host: 'https://proxy.staging.bearer.sh'
   }).integration('postman_echo')
   describe('GET', () => {
