@@ -133,5 +133,17 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
         expect(api.authenticate).toEqual(api.auth)
       })
     })
+
+    describe('#setup', () => {
+      it('sends any configured setup id in a Bearer-Setup-Id header', async () => {
+        const setupId = 'test-setup-id'
+        mockRequest({ method: 'GET', extraHeaders: { 'Bearer-Setup-Id': setupId } })
+
+        const { data } = await api.setup(setupId).get('/test', { query })
+
+        expect(distantApi).toHaveBeenCalled()
+        expect(data).toEqual(okResponse)
+      })
+    })
   })
 })

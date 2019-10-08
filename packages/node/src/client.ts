@@ -32,6 +32,7 @@ class BearerClient {
     readonly integrationId: string,
     readonly options: BearerClientOptions,
     readonly secretKey: string,
+    readonly setupId?: string,
     readonly authId?: string
   ) {
     if (this.options.timeout) {
@@ -44,7 +45,11 @@ class BearerClient {
   }
 
   public auth = (authId: string) => {
-    return new BearerClient(this.integrationId, this.options, this.secretKey, authId)
+    return new BearerClient(this.integrationId, this.options, this.secretKey, this.setupId, authId)
+  }
+
+  public setup = (setupId: string) => {
+    return new BearerClient(this.integrationId, this.options, this.secretKey, setupId, this.authId)
   }
 
   public authenticate = this.auth // Alias
@@ -91,7 +96,8 @@ class BearerClient {
     const preheaders: BearerHeaders = {
       Authorization: this.secretKey,
       'User-Agent': `Bearer-Node (${pkg.version})`,
-      'Bearer-Auth-Id': this.authId!
+      'Bearer-Auth-Id': this.authId!,
+      'Bearer-Setup-Id': this.setupId!
     }
 
     if (parameters && parameters.headers) {
