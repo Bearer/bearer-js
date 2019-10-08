@@ -18,6 +18,25 @@ trigger:
 
 ---
 kind: pipeline
+name: e2e tests
+steps:
+  - name: Test
+    image: node:10
+    commands:
+      - yarn install
+      - yarn lerna run prepack
+      - cd packages/node
+      - npm link
+      - cd e2e
+      - yarn install
+      - npm link @bearer/node
+      - yarn test
+trigger:
+  event:
+    - push
+
+---
+kind: pipeline
 name: Release (next)
 
 steps:
@@ -84,6 +103,6 @@ trigger:
     - canary
 ---
 kind: signature
-hmac: 7c747d246f15c891dd8b721aa13d48cf294cb70c553a12cb103c2b390f3ad9f7
+hmac: 3fdbd824e161cb98584a0b779ea351d16a51196424d89b0645cbab619ee96ac3
 
 ...
