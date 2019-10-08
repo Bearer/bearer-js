@@ -15,11 +15,7 @@ class Bearer {
   }
 
   public integration(integrationId: string, httpClientSettings: AxiosRequestConfig = { timeout: DEFAULT_TIMEOUT }) {
-    if (this.options.httpClientSettings) {
-      this.options.httpClientSettings = { ...this.options.httpClientSettings, ...httpClientSettings }
-    } else {
-      this.options.httpClientSettings = httpClientSettings
-    }
+    this.options.httpClientSettings = { ...this.options.httpClientSettings, ...httpClientSettings }
 
     return new BearerClient(integrationId, this.options, this.secretKey)
   }
