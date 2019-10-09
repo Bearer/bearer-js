@@ -1,12 +1,12 @@
 import nock from 'nock'
 
 import clientFactory, { bearer } from './client'
-const apiKey = 'spongeBobApiKey'
+const secretKey = 'spongeBobApiKey'
 const okResponse = { ok: 'ok' }
 const distantApi = jest.fn(() => okResponse)
 
 describe('Bearer client', () => {
-  const client = clientFactory(apiKey)
+  const client = clientFactory(secretKey)
 
   beforeEach(() => {
     distantApi.mockClear()
@@ -25,23 +25,6 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
     )
   })
 
-  describe('#invoke', () => {
-    it('send request to the function', async () => {
-      nock('https://int.bearer.sh', {
-        reqheaders: {
-          authorization: apiKey
-        }
-      })
-        .post('/api/v4/functions/backend/12345-integration-name/functionName')
-        .reply(200, distantApi)
-
-      const { data } = await client.invoke('12345-integration-name', 'functionName')
-
-      expect(distantApi).toHaveBeenCalled()
-      expect(data).toEqual(okResponse)
-    })
-  })
-
   describe('#integration', () => {
     const pkg = require('../package.json')
     const integrationName = '12345'
@@ -57,14 +40,14 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
     }
 
     const mockRequest = ({ method, extraHeaders = {}, body }: IMockRequestParams) => {
-      nock('https://int.bearer.sh', {
+      nock('https://proxy.bearer.sh', {
         reqheaders: {
-          authorization: apiKey,
+          authorization: secretKey,
           ...headers,
           ...extraHeaders
         }
       })
-        .intercept(`/api/v4/functions/backend/${integrationName}/bearer-proxy/test`, method, body)
+        .intercept(`/${integrationName}/test`, method, body)
         .once()
         .query(query)
         .reply(200, distantApi)

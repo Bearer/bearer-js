@@ -3,29 +3,21 @@ import axios, { AxiosRequestConfig, AxiosInstance } from 'axios'
 const DEFAULT_TIMEOUT = 5 * 1000 // 5 seconds
 
 class Bearer {
-  protected readonly bearerApiKey: string
-  protected options: BearerClientOptions = { host: 'https://int.bearer.sh', timeout: DEFAULT_TIMEOUT }
+  protected readonly secretKey: string
+  protected options: BearerClientOptions = {
+    host: 'https://proxy.bearer.sh',
+    httpClientSettings: { timeout: DEFAULT_TIMEOUT }
+  }
 
-  constructor(bearerApiKey: string, options?: BearerClientOptions) {
+  constructor(secretKey: string, options?: BearerClientOptions) {
     this.options = { ...this.options, ...options }
-    this.bearerApiKey = bearerApiKey
+    this.secretKey = secretKey
   }
 
-  public integration(integrationId: string) {
-    return new BearerClient(integrationId, this.options, this.bearerApiKey)
-  }
+  public integration(integrationId: string, httpClientSettings: AxiosRequestConfig = { timeout: DEFAULT_TIMEOUT }) {
+    this.options.httpClientSettings = { ...this.options.httpClientSettings, ...httpClientSettings }
 
-  /**
-   * Deprecated. Please use integration(...).invoke(...) instead
-   */
-
-  public invoke(
-    integrationId: string,
-    functionName: string,
-    { query, body }: { query?: any; body?: any } = { query: {}, body: {} }
-  ) {
-    const instance = new BearerClient(integrationId, this.options, this.bearerApiKey)
-    return instance.invoke(functionName, { query, body })
+    return new BearerClient(integrationId, this.options, this.secretKey)
   }
 }
 
@@ -35,21 +27,25 @@ class BearerClient {
   constructor(
     readonly integrationId: string,
     readonly options: BearerClientOptions,
-    readonly bearerApiKey: string,
+    readonly secretKey: string,
     readonly setupId?: string,
     readonly authId?: string
   ) {
+    if (this.options.timeout) {
+      console.warn('DEPRECATION WARNING: Please use `httpClientSettings`. `timeout` is deprecated')
+    }
     this.client = axios.create({
-      timeout: this.options.timeout || DEFAULT_TIMEOUT
+      timeout: this.options.timeout || DEFAULT_TIMEOUT,
+      ...this.options.httpClientSettings
     })
   }
 
   public auth = (authId: string) => {
-    return new BearerClient(this.integrationId, this.options, this.bearerApiKey, this.setupId, authId)
+    return new BearerClient(this.integrationId, this.options, this.secretKey, this.setupId, authId)
   }
 
   public setup = (setupId: string) => {
-    return new BearerClient(this.integrationId, this.options, this.bearerApiKey, setupId, this.authId)
+    return new BearerClient(this.integrationId, this.options, this.secretKey, setupId, this.authId)
   }
 
   public authenticate = this.auth // Alias
@@ -94,7 +90,7 @@ class BearerClient {
 
     const pkg = require('../package.json')
     const preheaders: BearerHeaders = {
-      Authorization: this.bearerApiKey,
+      Authorization: this.secretKey,
       'User-Agent': `Bearer-Node (${pkg.version})`,
       'Bearer-Auth-Id': this.authId!,
       'Bearer-Setup-Id': this.setupId!
@@ -102,7 +98,7 @@ class BearerClient {
 
     if (parameters && parameters.headers) {
       for (const key in parameters.headers) {
-        preheaders[`Bearer-Proxy-${key}`] = parameters.headers[key]
+        preheaders[key] = parameters.headers[key]
       }
     }
 
@@ -122,30 +118,10 @@ class BearerClient {
     return this.client.request<TData>({
       method,
       headers,
-      baseURL: `${this.options.host}/api/v4/functions/backend/${this.integrationId}/bearer-proxy`,
+      baseURL: `${this.options.host}/${this.integrationId}`,
       url: endpoint,
       params: parameters && parameters.query,
       data: parameters && parameters.body
-    })
-  }
-
-  /**
-   * Invoke custom functions
-   */
-
-  public invoke = <DataReturned = any>(
-    functionName: string,
-    { query, body }: { query?: any; body?: any } = { query: {}, body: {} }
-  ) => {
-    return this.client.request<DataReturned>({
-      baseURL: `${this.options.host}/api/v4/functions/backend/${this.integrationId}`,
-      url: `/${functionName}`,
-      headers: {
-        Authorization: this.bearerApiKey
-      },
-      method: 'post',
-      data: body,
-      params: query
     })
   }
 }
@@ -164,7 +140,7 @@ interface BearerRequestParameters {
 }
 
 type BearerRequestOptions = any
-type BearerClientOptions = { host: string; timeout?: number }
+type BearerClientOptions = { host: string; timeout?: number; httpClientSettings: AxiosRequestConfig }
 
 /**
  * Errors handling
