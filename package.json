@@ -32,7 +32,7 @@
     "test": "lerna run test:ci --stream",
     "cm": "git-cz",
     "postinstall": "lerna run prepare && lerna link",
-    "drone:sign": "cross-env-shell DRONE_TOKEN=$TOKEN DRONE_SERVER=$SERVER \"sh scripts/sign.sh\"",
+    "drone:sign": "yarn cross-env-shell DRONE_TOKEN=$TOKEN DRONE_SERVER=$SERVER \"sh scripts/sign.sh\"",
     "drone:lint": "drone lint",
     "drone:fmt": "drone fmt"
   },

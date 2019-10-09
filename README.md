@@ -45,6 +45,31 @@ You should use Bearer if you want to:
 
 The documentation is available on the Bearer [doc center](http://docs.bearer.sh).
 
+## Development
+
+### Requirements
+
+### CI/CD update
+
+```bash
+cp .envrc{.example,}
+```
+
+Install drone-cli
+Install on linux:
+
+```bash
+curl -L https://github.com/drone/drone-cli/releases/latest/download/drone_linux_amd64.tar.gz | tar zx
+sudo install -t /usr/local/bin drone
+```
+
+Install on MacOS:
+
+```bash
+brew tap drone/drone
+brew install drone
+```
+
 ## Contributing
 
 We welcome all contributors, from casual to regular 💙

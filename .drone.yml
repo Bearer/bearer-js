@@ -12,9 +12,42 @@ steps:
     image: node:10
     commands:
       - yarn test
+    environment:
+      SECRET_KEY:
+        from_secret: SECRET_KEY
 trigger:
   event:
     - push
+
+---
+kind: pipeline
+name: e2e tests
+steps:
+  - name: Prepack
+    image: node:10
+    commands:
+      - yarn install
+      - yarn lerna run prepack
+  - name: Link
+    image: node:10
+    commands:
+      - cd packages/node
+      - npm link
+      - cd e2e
+      - yarn install
+      - npm link @bearer/node
+  - name: Test
+    image: node:10
+    commands:
+      - yarn test
+    environment:
+      SECRET_KEY:
+        from_secret: SECRET_KEY
+trigger:
+  event:
+    - tag
+  ref:
+    - refs/tags/release-test-*
 
 ---
 kind: pipeline
@@ -84,6 +117,6 @@ trigger:
     - canary
 ---
 kind: signature
-hmac: 7c747d246f15c891dd8b721aa13d48cf294cb70c553a12cb103c2b390f3ad9f7
+hmac: a4a81acfe4a78eee0a0e2afe4bb6c06c9df6b3052ab1733f5aa49addb21bfc4f
 
 ...
