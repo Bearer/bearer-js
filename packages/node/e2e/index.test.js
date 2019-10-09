@@ -14,7 +14,6 @@ function expectedResult(method) {
       host: 'postman-echo.com',
       'my-custom-header': 'my-custom-header-value',
       'user-agent': 'Bearer.sh',
-      'x-amzn-trace-id': /Root.*/,
       'x-forwarded-port': '443',
       'x-forwarded-proto': 'https'
     },
