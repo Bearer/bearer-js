@@ -31,7 +31,8 @@ steps:
     image: node:10
     commands:
       - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - yarn lerna publish from-package --conventional-commits --create-release=github
+      - yarn lerna version --conventional-commits --create-release=github
+      - yarn lerna publish from-git --dist-tag=test
     environment:
       SECRET_KEY:
         from_secret: SECRET_KEY
@@ -111,6 +112,6 @@ trigger:
     - canary
 ---
 kind: signature
-hmac: ce3c24486bb100fa62c9c3bf5ed86a45ac9c584840a906b8ae5a9bb8798fc61d
+hmac: 4d3c15a2c7aeea9ac604aad8ef495a04788c7ee578384931b6eb8827a17478be
 
 ...
