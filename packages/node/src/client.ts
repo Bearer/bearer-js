@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosInstance } from 'axios'
 
 const DEFAULT_TIMEOUT = 5 * 1000 // 5 seconds
 
-// TODO: documentation
+// TODO: write documentation
 class Bearer {
   protected readonly secretKey: string
   protected options: BearerClientOptions = {
