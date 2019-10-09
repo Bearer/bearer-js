@@ -12,6 +12,9 @@ steps:
     image: node:10
     commands:
       - yarn test
+    environment:
+      SECRET_KEY:
+        from_secret: SECRET_KEY
 trigger:
   event:
     - push
@@ -31,6 +34,9 @@ steps:
       - yarn install
       - npm link @bearer/node
       - yarn test
+    environment:
+      SECRET_KEY:
+        from_secret: SECRET_KEY
 trigger:
   event:
     - push
@@ -103,6 +109,6 @@ trigger:
     - canary
 ---
 kind: signature
-hmac: 3fdbd824e161cb98584a0b779ea351d16a51196424d89b0645cbab619ee96ac3
+hmac: 9bfc808669b407ac0a54d33bcc6c0f637396006b0895834251e0c769b3e34290
 
 ...

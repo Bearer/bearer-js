@@ -10,6 +10,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@bearer/node": "^1.13.10"
+    "@bearer/node": "^2.0.0"
   }
 }

@@ -1,6 +1,8 @@
 const bearer = require('@bearer/node')
 const installedPkg = require('@bearer/node/package.json')
 
+const SECRET_KEY = process.env.SECRET_KEY
+
 function expectedResult(method) {
   return {
     args: {
@@ -48,8 +50,8 @@ describe('requests', () => {
   beforeAll(() => {
     console.log(`Running @bearer/node@${installedPkg.version}`)
   })
-  const api = bearer('sk_production_d1zTnXpHIudTiVFYp3CnC7wE16NdFvCi', {
-    host: 'https://proxy.staging.bearer.sh'
+  const api = bearer(SECRET_KEY, {
+    host: 'https://proxy.bearer.sh'
   }).integration('postman_echo')
   describe('GET', () => {
     it('sends GET request to echo server', makeTest(api, 'get'))
