@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/Bearer/bearer-js/compare/v2.0.0...v2.0.1) (2019-10-10)
+
+**Note:** Version bump only for package bearer-js-master
+
+
+
+
+
 ## [1.13.10](https://github.com/Bearer/bearer-js/compare/v1.13.9...v1.13.10) (2019-10-03)
 
 **Note:** Version bump only for package bearer-js-master
