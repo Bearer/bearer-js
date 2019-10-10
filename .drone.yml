@@ -35,6 +35,7 @@ steps:
       - git checkout master
       - git config --global user.email "engineering@bearer.sh"
       - git config --global user.name "Bearer engineering"
+      - git remote set-url origin git@github.com:Bearer/bearer-js.git
       - yarn lerna publish --dist-tag=test --conventional-commits --create-release=github --yes
     environment:
       SECRET_KEY:
@@ -115,6 +116,6 @@ trigger:
     - canary
 ---
 kind: signature
-hmac: 1ba766d6dc154dc16787287401bebb60e3e29dd4a699f0965fad928f4c5167fe
+hmac: 591ab77ba5dc6e6aecd5e3559c1db88ba7d30b87534a4076f5ed132052d45884
 
 ...
