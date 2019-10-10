@@ -33,6 +33,8 @@ steps:
       - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - git fetch origin master
       - git checkout master
+      - git config --global user.email "engineering@bearer.sh"
+      - git config --global user.name "Bearer engineering"
       - yarn lerna publish --dist-tag=test --conventional-commits --create-release=github --yes
     environment:
       SECRET_KEY:
@@ -113,6 +115,6 @@ trigger:
     - canary
 ---
 kind: signature
-hmac: 228c98bf18ac5d4936255b583e58c52d91f4c72a96157e0a13f89685703bc8d0
+hmac: 1ba766d6dc154dc16787287401bebb60e3e29dd4a699f0965fad928f4c5167fe
 
 ...
