@@ -33,15 +33,17 @@ steps:
       - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - git fetch origin master
       - git checkout master
-      - git config --global user.email "engineering@bearer.sh"
-      - git config --global user.name "Bearer engineering"
-      - git remote set-url origin git@github.com:Bearer/bearer-js.git
+      - git remote set-url origin https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/Bearer/bearer-js.git
       - yarn lerna publish --dist-tag=test --conventional-commits --create-release=github --yes
     environment:
       SECRET_KEY:
         from_secret: SECRET_KEY
       NPM_TOKEN:
         from_secret: NPM_TOKEN
+      GITHUB_USERNAME:
+        from_secret: GITHUB_USERNAME
+      GITHUB_TOKEN:
+        from_secret: GITHUB_TOKEN
 trigger:
   event:
     - tag
