@@ -5,7 +5,6 @@ import { REPORT_HOST } from './constants'
 import { get as getConfig } from './config'
 
 const logger = debug.extend('report')
-
 const queue: Record<string, any> = []
 const REPORT_BATCH_SIZE = 50
 const DRAIN_INTERVAL = 10 * 1000
@@ -37,24 +36,25 @@ function imperativeDrain() {
     {
       hostname: REPORT_HOST,
       port: 443,
-      path: '/poc/ingest',
+      path: '/logs',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       }
     },
     res => {
+      // @ts-ignore
       let data = ''
 
       // A chunk of data has been recieved.
       res.on('data', chunk => {
         data += chunk
-        console.log('[BEARER]', 'data', data, res.statusCode)
       })
       res.on('end', () => {
         if (res.statusCode === 200) {
-          console.error('All set')
+          logger('report sent')
         } else {
+          logger('error wild sending report adding to the queue')
           queue.push(...reportItems)
         }
         setImmediate(drain)
@@ -62,11 +62,13 @@ function imperativeDrain() {
     }
   )
   req.on('error', () => {
-    console.error('Error while reporting to bearer')
+    logger('Error while reporting to bearer')
     queue.push(...reportItems)
     setImmediate(drain)
   })
-  req.write(JSON.stringify({ clientId: getConfig().secret_key, logs: reportItems }))
+  const payload = { secretKey: getConfig().secret_key, logs: reportItems }
+  logger('sending: %j', payload)
+  req.write(JSON.stringify(payload))
   req.end()
 }
 

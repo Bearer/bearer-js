@@ -75,7 +75,7 @@ export const hijack = (module: typeof http | typeof https) => {
           try {
             data = JSON.parse(data)
           } catch (e) {
-            logger('parsing error')
+            logger('parsing error %s', data)
           }
         }
         report('REQUEST_END', {
