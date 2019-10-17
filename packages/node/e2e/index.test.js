@@ -52,6 +52,7 @@ describe('requests', () => {
   const api = bearer(SECRET_KEY, {
     host: 'https://proxy.bearer.sh'
   }).integration('postman_echo')
+
   describe('GET', () => {
     it('sends GET request to echo server', makeTest(api, 'get'))
   })
