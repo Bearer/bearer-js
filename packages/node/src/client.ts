@@ -1,5 +1,7 @@
-import axios, { AxiosRequestConfig, AxiosInstance } from 'axios'
+import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from 'axios'
+import { createLogger, format, transports, Logger } from 'winston'
 
+const { combine, timestamp, label, prettyPrint } = format
 const DEFAULT_TIMEOUT = 5 * 1000 // 5 seconds
 
 // TODO: write documentation
@@ -25,6 +27,15 @@ class Bearer {
 class BearerClient {
   protected readonly client: AxiosInstance = axios
 
+  public readonly loggerTransports = {
+    console: new transports.Console({ level: 'info' })
+  }
+
+  public readonly logger: Logger = createLogger({
+    format: combine(label({ label: 'bearer' }), timestamp(), prettyPrint()),
+    transports: [this.loggerTransports.console]
+  })
+
   constructor(
     readonly integrationId: string,
     readonly options: BearerClientOptions,
@@ -38,6 +49,12 @@ class BearerClient {
     this.client = axios.create({
       timeout: this.options.timeout || DEFAULT_TIMEOUT,
       ...this.options.httpClientSettings
+    })
+
+    this.client.interceptors.response.use((response: AxiosResponse) => {
+      const requestId = response.headers['bearer-request-id']
+      this.logger.info(`request id: ${requestId}`)
+      return response
     })
   }
 
@@ -116,13 +133,26 @@ class BearerClient {
       {} as any
     )
 
+    const baseURL = `${this.options.host}/${this.integrationId}`
+    const requestParams = parameters && parameters.query
+    const payload = parameters && parameters.body
+
+    this.logger.debug('sending request', {
+      method,
+      headers,
+      baseURL,
+      url: endpoint,
+      params: requestParams,
+      data: payload
+    })
+
     return this.client.request<TData>({
       method,
       headers,
-      baseURL: `${this.options.host}/${this.integrationId}`,
+      baseURL,
       url: endpoint,
-      params: parameters && parameters.query,
-      data: parameters && parameters.body
+      params: requestParams,
+      data: payload
     })
   }
 }
