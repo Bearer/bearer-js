@@ -53,6 +53,28 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
         .reply(200, distantApi)
     }
 
+    const mockErrorRequest = ({ method, extraHeaders = {}, body }: IMockRequestParams) => {
+      nock('https://proxy.bearer.sh', {
+        reqheaders: {
+          authorization: secretKey,
+          ...headers,
+          ...extraHeaders
+        }
+      })
+        .intercept(`/${integrationName}/test`, method, body)
+        .times(10)
+        .query(query)
+        .replyWithError({ message: 'error', code: 'ECONNREFUSED' })
+    }
+
+    it.only('retries the requests', async () => {
+      mockErrorRequest({ body, method: 'POST' })
+
+      await api.post('/test', { headers, query, body })
+
+      expect(distantApi).not.toHaveBeenCalled()
+    })
+
     it('performs correct API calls', async () => {
       mockRequest({ body, method: 'POST' })
 
