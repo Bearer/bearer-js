@@ -6,12 +6,12 @@ const whitelist = new Set([
   'ECONNREFUSED',
   'EPIPE',
   'EHOSTUNREACH',
-  'EAI_AGAIN',
-  'ENOTFOUND'
+  'EAI_AGAIN'
 ])
 
 const blacklist = new Set([
   'ENETUNREACH',
+  'ENOTFOUND',
 
   // SSL errors from https://github.com/nodejs/node/blob/e585caa2bebbd238c763af588a40879b61cf240f/src/node_crypto.cc#L2563-L2589
   'UNABLE_TO_GET_ISSUER_CERT',

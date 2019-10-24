@@ -6,7 +6,8 @@ import crypto from 'crypto'
 const { combine, timestamp, label, prettyPrint } = format
 const DEFAULT_TIMEOUT = 5 * 1000 // 5 seconds
 const DEFAULT_NUM_RETRIES = 2
-const DEAFULT_RETRY_DURATION = 500
+const DEFAULT_RETRY_DURATION = 500
+const DEFAULT_MAX_RETRY_DELAY = 2000
 
 // TODO: write documentation
 class Bearer {
@@ -30,8 +31,10 @@ class Bearer {
 
 class BearerClient {
   protected readonly client: AxiosInstance = axios
-  private requestState: Record<string, { numRetries: number }> = {}
-  private numRetries = DEFAULT_NUM_RETRIES
+  private requestState: Record<string, { numRetries: number; request: any }> = {}
+  private numRetries: number
+  private retryDuration: number
+  private maxRetryDelay: number
 
   public readonly loggerTransports = {
     console: new transports.Console({ level: 'info' })
@@ -47,11 +50,20 @@ class BearerClient {
     readonly options: BearerClientOptions,
     readonly secretKey: string,
     readonly setupId?: string,
-    readonly authId?: string,
-    readonly defaultRetryDuration: number = DEAFULT_RETRY_DURATION,
-    numRetries?: number
+    readonly authId?: string
   ) {
-    this.numRetries = numRetries || DEFAULT_NUM_RETRIES
+    const retrySettings = {
+      numRetries: DEFAULT_NUM_RETRIES,
+      retryDuration: DEFAULT_RETRY_DURATION,
+      maxRetryDelay: DEFAULT_MAX_RETRY_DELAY,
+
+      ...(options.retrySettings || {})
+    }
+
+    this.numRetries = retrySettings.numRetries
+    this.retryDuration = retrySettings.retryDuration
+    this.maxRetryDelay = retrySettings.maxRetryDelay
+
     if (this.options.timeout) {
       console.warn('DEPRECATION WARNING: Please use `httpClientSettings`. `timeout` is deprecated')
     }
@@ -59,51 +71,7 @@ class BearerClient {
       timeout: this.options.timeout || DEFAULT_TIMEOUT,
       ...this.options.httpClientSettings
     })
-
-    this.client.interceptors.request.use((config: AxiosRequestConfig) => {
-      const url = `${config.baseURL}${config.url}`
-      const { method, params, data } = config
-      const hash = this.makeHash(url, method, params, data)
-      const state = this.requestState[hash] || {}
-      state.numRetries = state.numRetries || DEFAULT_NUM_RETRIES
-      this.requestState[hash] = state
-      return config
-    })
-
-    this.client.interceptors.response.use(
-      (response: AxiosResponse) => {
-        const requestId = response.headers['bearer-request-id']
-        const { url, method, params, data } = response.config
-        delete this.requestState[this.makeHash(url, method, params, data)]
-        this.logger.info(`request id: ${requestId}`)
-        return response
-      },
-      error => {
-        const { url, method, params, data } = error.config
-        const hash = this.makeHash(url, method, params, data)
-        const { numRetries } = this.requestState[hash]
-        if (isRetryAllowed(error) && numRetries > 1) {
-          this.requestState[hash].numRetries = numRetries - 1
-          return new Promise(resolve =>
-            setTimeout(() => resolve(this.client.request(error.config)), this.defaultRetryDuration)
-          )
-        }
-        return Promise.reject(error)
-      }
-    )
-  }
-
-  private makeHash(
-    url: string | undefined,
-    method: string | undefined,
-    params: string | undefined,
-    data: string | undefined
-  ) {
-    const str = [url, method, params, data].map(x => JSON.stringify(x)).join('')
-    return crypto
-      .createHash('md5')
-      .update(str)
-      .digest('hex')
+    this.client.interceptors.response.use(this.interceptResponse, this.interceptErrorResponse)
   }
 
   public auth = (authId: string) => {
@@ -194,14 +162,78 @@ class BearerClient {
       data: payload
     })
 
-    return this.client.request<TData>({
+    const config = {
       method,
       headers,
       baseURL,
       url: endpoint,
       params: requestParams,
       data: payload
-    })
+    }
+
+    const hash = this.makeHash({ ...config, url: `${baseURL}${endpoint}` })
+    const state = this.getRequestState(hash)
+
+    state.request = () => {
+      return this.client.request<TData>(config)
+    }
+    state.numRetries = DEFAULT_NUM_RETRIES
+    this.requestState[hash] = state
+    return state.request()
+  }
+
+  private interceptErrorResponse = (error: any): Promise<unknown> => {
+    const hash = this.makeHash(error.config)
+    this.logger.warn(`Retrying request: ${hash}`)
+
+    const state = this.getRequestState(hash)
+
+    if (isRetryAllowed(error) && state.numRetries > 0) {
+      state.numRetries = state.numRetries - 1
+      return new Promise(resolve =>
+        setTimeout(() => resolve(state.request()), this.sleepMilliseconds(state.numRetries))
+      )
+    }
+    this.logger.warn(`Giving up, num retries ${this.numRetries} exceeded`)
+    return Promise.reject(error)
+  }
+  private interceptResponse = (response: AxiosResponse) => {
+    delete this.requestState[this.makeHash(response.config)]
+
+    const requestId = response.headers['bearer-request-id']
+    this.logger.info(`request id: ${requestId}`)
+    return response
+  }
+  private getRequestState = (hash: string): { numRetries: number; request: any } => {
+    return (this.requestState[hash] || {}) as { numRetries: number; request: any }
+  }
+
+  private sleepMilliseconds(numRetries: number): number {
+    let sleepTime = this.retryDuration * (2 ** (this.numRetries - numRetries) - 1)
+
+    sleepTime = Math.min(sleepTime, this.maxRetryDelay)
+
+    // Apply some jitter by randomizing the value in the range of
+    // (sleep_seconds / 2) to (sleep_seconds).
+    sleepTime *= 0.5 * (1 + Math.random())
+    this.logger.info(`Sleeping: ${sleepTime}`)
+    return sleepTime
+  }
+  private makeHash(config: {
+    url?: string
+    method?: string
+    params?: string | Record<string, string | number>
+    data?: any
+  }) {
+    const { url, method, params, data } = config
+    const str = [url, method, params, data]
+      .map(x => JSON.stringify(x))
+      .join('')
+      .toLowerCase()
+    return crypto
+      .createHash('md5')
+      .update(str)
+      .digest('hex')
   }
 }
 
@@ -219,7 +251,18 @@ interface BearerRequestParameters {
 }
 
 type BearerRequestOptions = any
-type BearerClientOptions = { host: string; timeout?: number; httpClientSettings: AxiosRequestConfig }
+type BearerClientOptions = {
+  host: string
+  timeout?: number
+  httpClientSettings?: AxiosRequestConfig
+  retrySettings?: RetrySettings
+}
+
+type RetrySettings = {
+  retryDuration?: number
+  numRetries?: number
+  maxRetryDelay?: number
+}
 
 /**
  * Errors handling

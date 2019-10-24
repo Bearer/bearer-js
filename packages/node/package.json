@@ -40,7 +40,6 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "axios-retry": "^3.1.2",
     "winston": "^3.2.1"
   },
   "gitHead": "7687898b77bcbc0afc0a6d5a228535947a189622"

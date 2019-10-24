@@ -61,16 +61,20 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
           ...extraHeaders
         }
       })
-        .intercept(`/${integrationName}/test`, method, body)
+        .intercept(`/${integrationName}/failing`, method, body)
         .times(10)
         .query(query)
-        .replyWithError({ message: 'error', code: 'ECONNREFUSED' })
+        .replyWithError({ message: 'error', code: 'ETIMEDOUT' })
     }
 
-    it.only('retries the requests', async () => {
-      mockErrorRequest({ body, method: 'POST' })
+    it('retries the requests', async () => {
+      const client = clientFactory(secretKey, { host: 'https://proxy.bearer.sh', retrySettings: { maxRetryDelay: 10 } })
 
-      await api.post('/test', { headers, query, body })
+      const api = client.integration(integrationName)
+      mockErrorRequest({ body, method: 'POST' })
+      expect.assertions(2)
+
+      await expect(api.post('/failing', { headers, query, body })).rejects.toMatchSnapshot()
 
       expect(distantApi).not.toHaveBeenCalled()
     })
