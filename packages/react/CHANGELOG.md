@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/Bearer/bearer-js/compare/v2.0.1...v2.1.0) (2019-10-28)
+
+
+### Features
+
+* support passing params when connecting ([2a3e31b](https://github.com/Bearer/bearer-js/commit/2a3e31b))
+
+
+
+
+
 ## [1.13.10](https://github.com/Bearer/bearer-js/compare/v1.13.9...v1.13.10) (2019-10-03)
 
 **Note:** Version bump only for package @bearer/react
