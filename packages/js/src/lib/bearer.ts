@@ -3,7 +3,7 @@ import debounce from 'debounce'
 import postRobot from 'post-robot'
 import { TIntegration } from './types'
 import debug from './logger'
-import { buildQuery, cleanQuery, cleanOptions } from './utils'
+import { buildQuery, cleanOptions } from './utils'
 import { EventEmitter } from './event'
 import { IntegrationClient } from './integrationClient'
 
@@ -62,16 +62,15 @@ export class Bearer {
   connect = (
     integration: string,
     setupId?: string,
-    { authId, width = 500, height = 600 }: { authId?: string; width?: number; height?: number } = {}
+    { authId, width = 500, height = 600, params = {} }: ConnectOptions = {}
   ) => {
-    const query = buildQuery(
-      cleanQuery({
-        setupId,
-        authId,
-        secured: this.config.secured,
-        clientId: this.clientId
-      })
-    )
+    const query = buildQuery({
+      params,
+      setupId,
+      authId,
+      secured: this.config.secured,
+      clientId: this.clientId
+    })
     const AUTHORIZED_URL = `${this.config.integrationHost}/v2/auth/${integration}?${query}`
 
     const promise = new Promise<{ integration: string; authId: string }>((resolve, reject) => {
@@ -233,6 +232,13 @@ export type TBearerOptions = {
   domObserver: boolean
   integrationHost: string
   refreshDebounceDelay: number
+}
+
+export interface ConnectOptions {
+  authId?: string
+  width?: number
+  height?: number
+  params?: Record<string, string | number>
 }
 
 /**

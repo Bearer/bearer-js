@@ -1,20 +1,4 @@
 /**
- * cleanQuery
- * @param params {object} remove all falsy values
- */
-export function cleanQuery(params: Record<string, any>) {
-  return Object.keys(params).reduce(
-    (acc, key) => {
-      if (params[key]) {
-        acc[key] = params[key]
-      }
-      return acc
-    },
-    {} as Record<string, string>
-  )
-}
-
-/**
  * cleanOptions remove all undefined keys
  * @param obj {object}
  */
@@ -36,11 +20,23 @@ export function cleanOptions(obj: Record<string, any>) {
  */
 
 export function buildQuery(params: Record<string, any>) {
-  function encode(k: string) {
-    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
+  const searchParams = new URLSearchParams()
+
+  function addParams(key: string, value: any): void {
+    if (value === null || value === undefined) {
+      return
+    }
+
+    if (typeof value === 'object') {
+      return Object.keys(value).forEach(nestedKey => addParams(`${key}[${nestedKey}]`, value[nestedKey]))
+    }
+
+    searchParams.append(key, value)
   }
 
-  return Object.keys(params)
-    .map(encode)
-    .join('&')
+  for (const key of Object.keys(params)) {
+    addParams(key, params[key])
+  }
+
+  return searchParams.toString()
 }
