@@ -32,7 +32,7 @@ describe('buildQuery', () => {
     }
 
     expect(buildQuery(params)).toMatchInlineSnapshot(
-      `"falseParams=false&aString=ok%20with%20space%20and%20accents%20%C3%A9%C3%A9%C3%A0&aNumber=1&nested%5Bx%5D=1&nested%5By%5D=2&nested%5Bz%5D%5Ba%5D=hello"`
+      `"falseParams=false&aString=ok+with+space+and+accents+%C3%A9%C3%A9%C3%A0&aNumber=1&nested%5Bx%5D=1&nested%5By%5D=2&nested%5Bz%5D%5Ba%5D=hello"`
     )
   })
 
