@@ -8,6 +8,7 @@ export interface IConnectProps {
   integration: string
   authId?: string
   setupId?: string
+  params?: Record<string, string | number>
   onSuccess: (data: TAuthPayload) => void
   onError?: (data: { authId?: string; integration: string; error: Error }) => void
   render: (props: { loading: boolean; connect: () => void; error: any }) => JSX.Element
@@ -32,7 +33,7 @@ class Connect extends React.Component<IConnectProps, { error?: any }> {
     return () => {
       this.setError(null)
       bearer
-        .connect(this.props.integration, this.props.setupId, { authId: this.props.authId })
+        .connect(this.props.integration, this.props.setupId, { authId: this.props.authId, params: this.props.params })
         .then((data: TAuthPayload) => {
           if (this.props.integration === data.integration) {
             this.props.onSuccess(data)

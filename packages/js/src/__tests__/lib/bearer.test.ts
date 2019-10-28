@@ -1,7 +1,8 @@
 import Bearer, { findElements, calculateModalPosition } from '../../lib/bearer'
 import { IntegrationClient } from '../../lib/integrationClient'
 
-const clientId = 'a-client-id'
+const clientId = 'client-id'
+const setupId = 'test-setup-id'
 
 describe('bearer', () => {
   it('exports a Bearer class', () => {
@@ -86,7 +87,7 @@ describe('bearer', () => {
   })
 
   describe('connect', () => {
-    const instance = new Bearer('client-id')
+    const instance = new Bearer(clientId)
     const openSpy = jest.fn()
     window.open = openSpy
 
@@ -102,6 +103,16 @@ describe('bearer', () => {
         '',
         // jsdom has no easy to configure jsdom screen size, unit tests are covering calculateModalPosition
         'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=0, height=0, top=0, left=0'
+      )
+    })
+
+    it('includes any connect parameters in the URL', () => {
+      instance.connect('my-integration', setupId, { params: { x: 123, y: 'hello' } })
+
+      expect(openSpy).toHaveBeenCalledWith(
+        `INTEGRATION_HOST_URL/v2/auth/my-integration?params%5Bx%5D=123&params%5By%5D=hello&setupId=${setupId}&clientId=${clientId}`,
+        '',
+        expect.anything()
       )
     })
 

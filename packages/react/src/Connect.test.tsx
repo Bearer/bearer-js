@@ -2,6 +2,8 @@ import * as React from 'react'
 import { render, fireEvent, waitForElement } from '@testing-library/react'
 
 const integration = 'my-dummy-integration'
+const params = { someParam: 'some-param', otherParam: 'other-param' }
+
 const connect = jest.fn((_one, _two, { authId }) => {
   if (authId === 'failure') {
     return Promise.reject({ integration, authId })
@@ -29,7 +31,7 @@ describe('Connect', () => {
       expect(getByText('Click')).not.toBeNull()
       fireEvent.click(getByText(/Click/i))
 
-      expect(connect).toHaveBeenCalledWith(integration, 'my-setup', { authId: 'auth-id' })
+      expect(connect).toHaveBeenCalledWith(integration, 'my-setup', { params, authId: 'auth-id' })
       // next tick
       await waitForElement(() => getByText(/Click/i))
       expect(success).toHaveBeenCalledWith({ authId: 'auth-id', integration: 'my-dummy-integration' })
@@ -46,7 +48,7 @@ describe('Connect', () => {
       expect(getByText('Click')).not.toBeNull()
       fireEvent.click(getByText(/Click/i))
 
-      expect(connect).toHaveBeenCalledWith('dummy', 'my-setup', { authId: 'failure' })
+      expect(connect).toHaveBeenCalledWith('dummy', 'my-setup', { params, authId: 'failure' })
 
       await waitForElement(() => getByText(/Failure retry/i))
 
@@ -74,6 +76,7 @@ function renderConnect({
       onSuccess={success}
       onError={onError}
       authId={authId}
+      params={params}
       render={({ connect, error }) =>
         !error ? <button onClick={connect}>Click</button> : <button onClick={connect}>Failure retry</button>
       }
