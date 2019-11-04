@@ -1,0 +1,31 @@
+{
+  "private": false,
+  "name": "@bearer/node-agent",
+  "version": "0.1.0",
+  "description": "Bearer Node Agent",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": "Bearer/bearer-js",
+  "homepage": "https://github.com/Bearer/node-agent/tree/master/packages/js#readme",
+  "author": "Bearer Team<engineering@bearer.sh>",
+  "license": "MIT",
+  "files": [
+    "lib/"
+  ],
+  "scripts": {
+    "start": "tsc --watch",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf lib",
+    "prepare": "yarn clean && yarn build",
+    "prepack": "yarn clean && NODE_ENV=production yarn build",
+    "test": "jest --colors",
+    "test:ci": "jest --coverage --colors"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.21",
+    "@types/node": "^12.12.5",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.4"
+  }
+}
