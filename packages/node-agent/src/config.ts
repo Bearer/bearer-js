@@ -19,6 +19,10 @@ export class Configuration {
       ...this.readFromEnv(),
       ...this.readFromConfigFile()
     }
+
+    if (!this.get('secret')) {
+      logger.error('No secret key provided, agent is not enabled')
+    }
   }
 
   get(name: OptionName) {
