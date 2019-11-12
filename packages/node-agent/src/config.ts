@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { logger } from './logger'
 
 let config: Configuration
@@ -17,8 +19,6 @@ export class Configuration {
       ...this.readFromEnv(),
       ...this.readFromConfigFile()
     }
-
-    // read from env
   }
 
   get(name: OptionName) {
@@ -38,10 +38,39 @@ export class Configuration {
   }
 
   readFromConfigFile = () => {
-    // read from bearer.yml
-    // read from config/bearer.yml
-    // read from BEARER_CONFIG_FILE
+    const configPath = configFilePath()
+    if (configPath) {
+      for (const encoding of encodings) {
+        const config = tryReadConfigFile(configPath, encoding)
+        if (Object.keys(config).length) {
+          return config
+        }
+      }
+    }
     return {}
+  }
+}
+
+const encodings = ['utf8', 'utf-8', 'ascii', 'binary', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'hex', 'base64']
+function tryReadConfigFile(path: string, encoding: string) {
+  try {
+    const config = fs.readFileSync(path, encoding)
+    return JSON.parse(config)
+  } catch (err) {
+    // TODO: log error
+    return {}
+  }
+}
+
+function configFilePath() {
+  const rootConfig = path.join(process.cwd(), 'bearer.json')
+  if (fs.existsSync(rootConfig)) {
+    return rootConfig
+  }
+
+  const fromEnvPath = process.env['BEARER_CONFIG_FILE']
+  if (fromEnvPath && fs.existsSync(fromEnvPath)) {
+    return fromEnvPath
   }
 }
 
