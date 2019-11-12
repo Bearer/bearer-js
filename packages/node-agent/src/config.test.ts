@@ -47,7 +47,7 @@ describe('Configuration', () => {
               disabled: false,
               secret: 'secret from file',
               ignored: ['ignore.from.file'],
-              log_level: 'ALL',
+              logLevel: 'ALL',
               filtered: ['filtere-from-file']
             },
             file,
@@ -64,7 +64,7 @@ describe('Configuration', () => {
           disabled: false,
           filtered: ['filtere-from-file'],
           ignored: ['ignore.from.file'],
-          log_level: 'ALL',
+          logLevel: 'ALL',
           report_host: 'https://agent.bearer.sh',
           secret: 'secret from file'
         })
@@ -83,7 +83,7 @@ describe('Configuration', () => {
             disabled: false,
             secret: 'secret from custom location',
             ignored: ['ignore.custom.location'],
-            log_level: 'ALL',
+            logLevel: 'ALL',
             filtered: ['custom-file-filter']
           },
           file,
@@ -99,7 +99,7 @@ describe('Configuration', () => {
           disabled: false,
           filtered: ['custom-file-filter'],
           ignored: ['ignore.custom.location'],
-          log_level: 'ALL',
+          logLevel: 'ALL',
           report_host: 'https://agent.bearer.sh',
           secret: 'secret from custom location'
         })
@@ -134,7 +134,7 @@ describe('Configuration', () => {
             "bin.bearer.sh",
             "foobar.com",
           ],
-          "log_level": "ALL",
+          "logLevel": "ALL",
           "report_host": "https://agent.bearer.sh",
           "secret": "secret from env",
         }

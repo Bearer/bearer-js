@@ -83,7 +83,7 @@ export const initConfig = () => {
   logger.debug('Bearer agent initialized with %j', config.conf)
 }
 
-type OptionName = 'from' | 'debugLevel' | 'disabled' | 'secret' | 'ignored' | 'log_level' | 'filtered' | 'report_host'
+type OptionName = 'from' | 'debugLevel' | 'disabled' | 'secret' | 'ignored' | 'logLevel' | 'filtered' | 'report_host'
 
 type ConfigOption = {
   key: string
@@ -114,7 +114,7 @@ const OPTIONS: Record<OptionName, ConfigOption> = {
     formatter: commaSeparatedListToArray,
     default: []
   },
-  log_level: {
+  logLevel: {
     key: 'BEARER_AGENT_LOG_LEVEL',
     choices: new Set(['ALL', 'RESTRICTED']),
     default: 'RESTRICTED'
