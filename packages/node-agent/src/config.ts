@@ -29,7 +29,7 @@ export class Configuration {
     return (Object.keys(OPTIONS) as OptionName[]).reduce(
       (acc, name) => {
         const value = process.env[OPTIONS[name]['key']] || OPTIONS[name]['default']
-        const formatter = OPTIONS[name]['format']
+        const formatter = OPTIONS[name]['formatter']
         acc[name] = formatter ? formatter(value) : value
         return acc
       },
@@ -79,16 +79,16 @@ export const initConfig = () => {
   logger.debug('Bearer agent initialized with %j', config.conf)
 }
 
-type OptionName = keyof typeof OPTIONS
+type OptionName = 'from' | 'debugLevel' | 'disabled' | 'secret' | 'ignored' | 'log_level' | 'filtered' | 'report_host'
 
-type OptionConfig = {
+type ConfigOption = {
   key: string
   default: any
-  format?: (input: any) => any
+  formatter?: (input: any) => any
   choices?: Set<any>
 }
 
-const OPTIONS: Record<string, OptionConfig> = {
+const OPTIONS: Record<OptionName, ConfigOption> = {
   from: {
     key: 'BEARER_CONFIG_FILE',
     default: undefined
@@ -107,7 +107,7 @@ const OPTIONS: Record<string, OptionConfig> = {
   },
   ignored: {
     key: 'BEARER_AGENT_IGNORE',
-    format: commaSeparatedListToArray,
+    formatter: commaSeparatedListToArray,
     default: []
   },
   log_level: {
@@ -117,7 +117,7 @@ const OPTIONS: Record<string, OptionConfig> = {
   },
   filtered: {
     key: 'BEARER_AGENT_FILTERED',
-    format: commaSeparatedListToArray,
+    formatter: commaSeparatedListToArray,
     default: []
   },
   report_host: {
