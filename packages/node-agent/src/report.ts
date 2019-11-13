@@ -3,7 +3,7 @@ import throttle from 'lodash.throttle'
 import { logger } from './logger'
 import { Configuration } from './config'
 
-const queue: Record<string, any> = []
+const queue: ReportLog[] = []
 const REPORT_BATCH_SIZE = 5
 const DRAIN_INTERVAL = 10 * 1000
 
@@ -17,7 +17,7 @@ const agentInfo = {
   version: require('../package.json').version
 }
 
-export const enqueue = (report: Record<string, any>) => {
+export const enqueue = (report: ReportLog) => {
   queue.push(report)
   setImmediate(drain)
 }
@@ -58,11 +58,13 @@ export function imperativeDrain() {
       })
     }
   )
+
   req.on('error', e => {
     logger.error('Error while reporting to bearer', e)
     queue.push(...reportItems)
     setImmediate(drain)
   })
+
   const payload: Report = {
     runtime: runtimeInfo,
     agent: {
@@ -94,5 +96,27 @@ type Report = {
     version: string
     log_level: string
   }
-  logs: any[]
+  logs: ReportLog[]
+}
+
+type ReportLog = RestrictedReportLog | FullReportLog
+
+export type RestrictedReportLog = {
+  port?: number
+  protocol: 'http' | 'https'
+  path: string
+  hostname: string
+  method: string
+  startedAt: number
+  endedAt: number
+  type: 'REQUEST_END' // # REQUEST_ERROR | REQUEST_END
+  statusCode: number
+  url: string
+}
+
+export type FullReportLog = RestrictedReportLog & {
+  requestHeaders: Record<string, string | number>
+  requestBody: string
+  responseHeaders: Record<string, string | number>
+  responseBody: string
 }
