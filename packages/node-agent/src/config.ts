@@ -72,7 +72,7 @@ function configFilePath() {
     return rootConfig
   }
 
-  const fromEnvPath = process.env['BEARER_CONFIG_FILE']
+  const fromEnvPath = process.env['BEARER_AGENT_CONFIG_FILE']
   if (fromEnvPath && fs.existsSync(fromEnvPath)) {
     return fromEnvPath
   }
@@ -103,7 +103,7 @@ type ConfigOption = {
 
 const OPTIONS: Record<OptionName, ConfigOption> = {
   from: {
-    key: 'BEARER_CONFIG_FILE',
+    key: 'BEARER_AGENT_CONFIG_FILE',
     default: undefined
   },
   debugLevel: {

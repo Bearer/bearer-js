@@ -71,11 +71,11 @@ describe('Configuration', () => {
       })
     })
 
-    describe('when BEARER_CONFIG_FILE is provided', () => {
+    describe('when BEARER_AGENT_CONFIG_FILE is provided', () => {
       const file = path.join(dir, 'custom-filename.json')
 
       beforeEach(done => {
-        setEnv({ BEARER_CONFIG_FILE: file })
+        setEnv({ BEARER_AGENT_CONFIG_FILE: file })
 
         dumpConfig(
           {
