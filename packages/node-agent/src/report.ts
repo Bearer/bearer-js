@@ -1,3 +1,4 @@
+import http from 'http'
 import https from 'https'
 import throttle from 'lodash.throttle'
 import { logger } from './logger'
@@ -124,8 +125,8 @@ export type RestrictedReportLog = {
 }
 
 export type FullReportLog = RestrictedReportLog & {
-  requestHeaders: Record<string, string | number>
+  requestHeaders: http.OutgoingHttpHeaders
   requestBody: string
-  responseHeaders: Record<string, string | number>
+  responseHeaders: http.IncomingHttpHeaders
   responseBody: string
 }
