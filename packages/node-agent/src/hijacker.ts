@@ -3,7 +3,6 @@ import http, { RequestOptions, IncomingMessage, ClientRequest } from 'http'
 import { Configuration } from './config'
 import { logger } from './logger'
 import { enqueue, ReportLog, FullReportLog, RestrictedReportLog } from './report'
-const BEARER_URL = /bearer\.sh/i
 
 export const hijack = (module: typeof http) => {
   const originalRequest = module.request
@@ -16,7 +15,7 @@ export const hijack = (module: typeof http) => {
     const req = originalRequest.apply(this, arguments)
     // Let's make sure it does not crash the app
     const { url, options, method, fullUrl } = extractRequest(urlOrOptions, optionsOrCallback)
-    if (options.hostname !== Configuration.getConfig('report_host') && !BEARER_URL.test(options.hostname)) {
+    if (trackableurl(options.hostname)) {
       const isVerbose = Configuration.getConfig('logLevel') === 'ALL'
       const startedAt = Date.now()
       logger.debug('request: url=%s method=%s query=%j headers=%j', url, method, options.query, options.headers)
@@ -152,6 +151,20 @@ export function extractRequest(urlOrOptions: any, optionsOrCallback: any) {
   }
 }
 
+const BEARER_URL = /bearer\.sh/i
+
+function trackableurl(domain: string) {
+  if (BEARER_URL.test(domain)) {
+    return false
+  }
+  if (Configuration.getConfig('report_host') === domain) {
+    return false
+  }
+  if (Configuration.getConfig('ignored').some((ignored: string) => ignored.includes(domain))) {
+    return false
+  }
+  return true
+}
 const DEFAULT_FILTER = /authorization/i
 const FILTERED = '[FILTERED]'
 function filterObject(object: Record<string, any>) {
