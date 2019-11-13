@@ -1,6 +1,7 @@
-import { parse, URL } from 'url'
-import http, { RequestOptions, IncomingMessage, ClientRequest } from 'http'
+import { parse, URL, format, UrlWithParsedQuery } from 'url'
+import http, { RequestOptions, IncomingMessage, ClientRequest, Agent } from 'http'
 import { Configuration } from './config'
+import { logger } from './logger'
 
 export const hijack = (module: typeof http) => {
   const originalRequest = module.request
@@ -13,12 +14,16 @@ export const hijack = (module: typeof http) => {
   }
 
   function request(
-    url: string | URL,
-    options: RequestOptions,
+    urlOrOptions: string | URL,
+    optionsOrCallback: RequestOptions,
     callback?: (res: IncomingMessage) => void
   ): ClientRequest {
     const req = originalRequest.apply(this, arguments)
     const emit = req.emit
+    const { url, options, method } = extractRequest(urlOrOptions, optionsOrCallback)
+
+    logger.debug('request: url=%s method=%s query=%j headers=%j', url, method, options.query, options.headers)
+
     req.emit = function(eventName: string, res: IncomingMessage) {
       switch (eventName) {
         case 'response': {
@@ -56,4 +61,45 @@ export const hijack = (module: typeof http) => {
   // TODO: remove ts-ignore
   // @ts-ignore
   module.request = request
+}
+
+export function extractRequest(
+  urlOrOptions: any,
+  optionsOrCallback: any
+): {
+  url: string
+  fullUrl: () => string
+  method: string
+  options: {
+    headers: Record<string, string>
+    query: string
+  }
+} {
+  let options = typeof urlOrOptions === 'string' ? parse(urlOrOptions) : { ...urlOrOptions }
+  if (typeof optionsOrCallback === 'object') {
+    options = {
+      ...options,
+      ...optionsOrCallback
+    }
+  }
+  const url = buildUrl(options)
+  const query = options.search || ''
+  return {
+    url,
+    fullUrl: () => [url, query].join(''),
+    method: options.method || 'GET',
+    options: {
+      query,
+      headers: options.headers || {}
+    }
+  }
+}
+
+function buildUrl(options: UrlWithParsedQuery | RequestOptions) {
+  return format({
+    protocol: options.protocol || 'http:',
+    hostname: options.hostname || options.host || 'localhost',
+    port: options.port,
+    pathname: (options as UrlWithParsedQuery).pathname || options.path || '/'
+  })
 }
