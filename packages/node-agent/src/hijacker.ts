@@ -2,6 +2,8 @@ import { parse, URL, format, UrlWithParsedQuery } from 'url'
 import http, { RequestOptions, IncomingMessage, ClientRequest, Agent } from 'http'
 import { Configuration } from './config'
 import { logger } from './logger'
+import { enqueue, ReportLog } from './report'
+const BEARER_URL = /bearer\.sh/i
 
 export const hijack = (module: typeof http) => {
   const originalRequest = module.request
@@ -19,41 +21,67 @@ export const hijack = (module: typeof http) => {
     callback?: (res: IncomingMessage) => void
   ): ClientRequest {
     const req = originalRequest.apply(this, arguments)
-    const emit = req.emit
     const { url, options, method } = extractRequest(urlOrOptions, optionsOrCallback)
-
-    logger.debug('request: url=%s method=%s query=%j headers=%j', url, method, options.query, options.headers)
-
-    req.emit = function(eventName: string, res: IncomingMessage) {
-      switch (eventName) {
-        case 'response': {
-          let data: string
-
-          if (Configuration.getConfig('logLevel') === 'ALL') {
-            res.on('data', chunk => {
-              if (!data) {
-                data = ''
-              }
-              data += chunk
-            })
-          }
-
-          res.on('end', () => {
-            console.log('response', res.statusCode, data)
-          })
-          break
+    if (options.hostname !== Configuration.getConfig('report_host') && !BEARER_URL.test(options.hostname)) {
+      const emit = req.emit
+      const startedAt = Date.now()
+      logger.debug('request: url=%s method=%s query=%j headers=%j', url, method, options.query, options.headers)
+      function report({ statusCode, type }: { statusCode: number; type: ReportLog['type'] }) {
+        const report = {
+          startedAt,
+          method,
+          statusCode,
+          url,
+          endedAt: Date.now(),
+          hostname: options.hostname,
+          path: options.path,
+          port: options.port,
+          protocol: options.protocol
         }
-        case 'error': {
-          // TODO: report error
-          break
-        }
-        case 'abort': {
-          // TODO: report aborted request
-          break
-        }
-        // case 'close':
+        enqueue(report as ReportLog)
       }
-      return emit.apply(this, arguments)
+
+      req.emit = function(eventName: string, res: IncomingMessage) {
+        switch (eventName) {
+          case 'response': {
+            let data: string
+
+            if (Configuration.getConfig('logLevel') === 'ALL') {
+              res.on('data', chunk => {
+                if (!data) {
+                  data = ''
+                }
+                data += chunk
+              })
+            }
+
+            res.on('end', () => {
+              logger.debug('request end for %s', url)
+              report({
+                type: 'REQUEST_END', // # REQUEST_ERROR | REQUEST_END
+                statusCode: res.statusCode!
+              })
+            })
+            break
+          }
+          case 'error': {
+            // TODO: report error
+            logger.debug('request error for %s', url)
+            // report({
+            //   type: 'REQUEST_ERROR'
+            //   statusCode: res.statusCode!
+            // })
+            break
+          }
+          case 'abort': {
+            // TODO: report aborted request
+            break
+          }
+          // case 'close':
+        }
+
+        return emit.apply(this, arguments)
+      }
     }
 
     return req
@@ -63,18 +91,7 @@ export const hijack = (module: typeof http) => {
   module.request = request
 }
 
-export function extractRequest(
-  urlOrOptions: any,
-  optionsOrCallback: any
-): {
-  url: string
-  fullUrl: () => string
-  method: string
-  options: {
-    headers: Record<string, string>
-    query: string
-  }
-} {
+export function extractRequest(urlOrOptions: any, optionsOrCallback: any) {
   let options = typeof urlOrOptions === 'string' ? parse(urlOrOptions) : { ...urlOrOptions }
   if (typeof optionsOrCallback === 'object') {
     options = {
@@ -82,24 +99,25 @@ export function extractRequest(
       ...optionsOrCallback
     }
   }
-  const url = buildUrl(options)
   const query = options.search || ''
+  const protocol = options.protocol || 'http:'
+  const hostname = options.hostname || options.host || 'localhost'
+  const port = options.port
+  const pathname = (options as UrlWithParsedQuery).pathname || options.path || '/'
+  const headers = options.headers || {}
+  const url = format({ protocol, hostname, port, pathname })
+
   return {
     url,
     fullUrl: () => [url, query].join(''),
     method: options.method || 'GET',
     options: {
+      protocol,
+      hostname,
+      port,
       query,
-      headers: options.headers || {}
+      headers,
+      path: pathname
     }
   }
-}
-
-function buildUrl(options: UrlWithParsedQuery | RequestOptions) {
-  return format({
-    protocol: options.protocol || 'http:',
-    hostname: options.hostname || options.host || 'localhost',
-    port: options.port,
-    pathname: (options as UrlWithParsedQuery).pathname || options.path || '/'
-  })
 }
