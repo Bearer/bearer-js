@@ -83,7 +83,16 @@ export const initConfig = () => {
   logger.debug('Bearer agent initialized with %j', config.conf)
 }
 
-type OptionName = 'from' | 'debugLevel' | 'disabled' | 'secret' | 'ignored' | 'logLevel' | 'filtered' | 'report_host'
+type OptionName =
+  | 'from'
+  | 'debugLevel'
+  | 'disabled'
+  | 'secret'
+  | 'ignored'
+  | 'logLevel'
+  | 'filtered'
+  | 'report_host'
+  | 'throttleDisabled'
 
 type ConfigOption = {
   key: string
@@ -127,6 +136,10 @@ const OPTIONS: Record<OptionName, ConfigOption> = {
   report_host: {
     key: 'BEARER_AGENT_REPORT_HOST',
     default: 'https://agent.bearer.sh'
+  },
+  throttleDisabled: {
+    key: 'BEARER_AGENT_THROTTLE_DISABLED',
+    default: false
   }
 }
 

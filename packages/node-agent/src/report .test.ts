@@ -1,5 +1,5 @@
 import nock from 'nock'
-import { enqueue, imperativeDrain } from './report'
+import { enqueue, flush } from './report'
 
 jest.useFakeTimers()
 
@@ -16,9 +16,9 @@ describe('report', () => {
       .reply(apiCall)
   })
 
-  describe('imperativeDrain', () => {
+  describe('flush', () => {
     test('does not perfom call if nothing is in the queue', async done => {
-      imperativeDrain()
+      flush()
 
       expect(apiCall).not.toHaveBeenCalled()
 

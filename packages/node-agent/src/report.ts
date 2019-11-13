@@ -19,10 +19,14 @@ const agentInfo = {
 
 export const enqueue = (report: ReportLog) => {
   queue.push(report)
-  setImmediate(drain)
+  if (Configuration.getConfig('throttleDisabled')) {
+    flush()
+  } else {
+    setImmediate(drain)
+  }
 }
 
-export function imperativeDrain() {
+export function flush() {
   const reportItems = queue.splice(0, REPORT_BATCH_SIZE)
   if (!reportItems.length) {
     logger.debug('no items to report')
@@ -54,7 +58,9 @@ export function imperativeDrain() {
           logger.error('error while sending report adding to the queue')
           queue.push(...reportItems)
         }
-        setImmediate(drain)
+        if (queue.length) {
+          setImmediate(drain)
+        }
       })
     }
   )
@@ -74,16 +80,19 @@ export function imperativeDrain() {
     secretKey: Configuration.getConfig('secret'),
     logs: reportItems
   }
+
   logger.debug('sending: %j', payload)
+
   req.write(JSON.stringify(payload))
   req.end()
 }
 
 process.on('SIGTERM', () => {
-  imperativeDrain()
+  flush()
 })
 
-export const drain = throttle(imperativeDrain, DRAIN_INTERVAL, { leading: true, trailing: true })
+// TODO: fix process blocking because of throttle usage
+export const drain = throttle(flush, DRAIN_INTERVAL, { leading: true })
 
 type Report = {
   secretKey: string
@@ -99,7 +108,7 @@ type Report = {
   logs: ReportLog[]
 }
 
-type ReportLog = RestrictedReportLog | FullReportLog
+export type ReportLog = RestrictedReportLog | FullReportLog
 
 export type RestrictedReportLog = {
   port?: number
@@ -109,7 +118,7 @@ export type RestrictedReportLog = {
   method: string
   startedAt: number
   endedAt: number
-  type: 'REQUEST_END' // # REQUEST_ERROR | REQUEST_END
+  type: 'REQUEST_END' | 'REQUEST_ERROR'
   statusCode: number
   url: string
 }
