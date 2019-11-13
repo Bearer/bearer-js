@@ -24,7 +24,7 @@ class Bearer {
   }
 }
 
-class BearerClient {
+export class BearerClient {
   protected readonly client: AxiosInstance = axios
 
   public readonly loggerTransports = {
