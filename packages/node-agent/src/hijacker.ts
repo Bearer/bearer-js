@@ -15,7 +15,7 @@ export const hijack = (module: typeof http) => {
   ): ClientRequest {
     const req = originalRequest.apply(this, arguments)
     // Let's make sure it does not crash the app
-    const { url, options, method } = extractRequest(urlOrOptions, optionsOrCallback)
+    const { url, options, method, fullUrl } = extractRequest(urlOrOptions, optionsOrCallback)
     if (options.hostname !== Configuration.getConfig('report_host') && !BEARER_URL.test(options.hostname)) {
       const isVerbose = Configuration.getConfig('logLevel') === 'ALL'
       const startedAt = Date.now()
@@ -35,8 +35,8 @@ export const hijack = (module: typeof http) => {
           startedAt,
           method,
           statusCode,
-          url,
           type,
+          url: fullUrl(),
           endedAt: Date.now(),
           hostname: options.hostname,
           path: options.path,
