@@ -47,7 +47,7 @@ describe('Configuration', () => {
               disabled: false,
               secret: 'secret from file',
               ignored: ['ignore.from.file'],
-              logLevel: 'ALL',
+              logLevel: 'RESTRICTED',
               filtered: ['filtere-from-file']
             },
             file,
@@ -64,7 +64,7 @@ describe('Configuration', () => {
           disabled: false,
           filtered: ['filtere-from-file'],
           ignored: ['ignore.from.file'],
-          logLevel: 'ALL',
+          logLevel: 'RESTRICTED',
           report_host: 'https://agent.bearer.sh',
           secret: 'secret from file'
         })
@@ -83,7 +83,7 @@ describe('Configuration', () => {
             disabled: false,
             secret: 'secret from custom location',
             ignored: ['ignore.custom.location'],
-            logLevel: 'ALL',
+            logLevel: 'RESTRICTED',
             filtered: ['custom-file-filter']
           },
           file,
@@ -99,7 +99,7 @@ describe('Configuration', () => {
           disabled: false,
           filtered: ['custom-file-filter'],
           ignored: ['ignore.custom.location'],
-          logLevel: 'ALL',
+          logLevel: 'RESTRICTED',
           report_host: 'https://agent.bearer.sh',
           secret: 'secret from custom location'
         })
@@ -114,7 +114,7 @@ describe('Configuration', () => {
         BEARER_AGENT_DISABLED: 'true',
         BEARER_SECRET_KEY: 'secret from env',
         BEARER_AGENT_IGNORE: 'bin.bearer.sh, foobar.com ',
-        BEARER_AGENT_LOG_LEVEL: 'ALL',
+        BEARER_AGENT_LOG_LEVEL: 'RESTRICTED',
         BEARER_AGENT_FILTERED: 'hiddenHeader'
       })
     })
@@ -134,7 +134,7 @@ describe('Configuration', () => {
             "bin.bearer.sh",
             "foobar.com",
           ],
-          "logLevel": "ALL",
+          "logLevel": "RESTRICTED",
           "report_host": "https://agent.bearer.sh",
           "secret": "secret from env",
         }
@@ -147,6 +147,10 @@ describe('Configuration', () => {
 
     test('token', () => {
       expect(instance.get('secret')).toBeUndefined()
+    })
+
+    test('logLevel', () => {
+      expect(instance.get('logLevel')).toEqual('ALL')
     })
   })
 })

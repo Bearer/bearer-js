@@ -117,7 +117,7 @@ const OPTIONS: Record<OptionName, ConfigOption> = {
   logLevel: {
     key: 'BEARER_AGENT_LOG_LEVEL',
     choices: new Set(['ALL', 'RESTRICTED']),
-    default: 'RESTRICTED'
+    default: 'ALL'
   },
   filtered: {
     key: 'BEARER_AGENT_FILTERED',
