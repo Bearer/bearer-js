@@ -151,10 +151,12 @@ export function extractRequest(urlOrOptions: any, optionsOrCallback: any) {
   }
 }
 
-const BEARER_URL = /bearer\.sh/i
+const DEFAULT_IGNORE = ['bearer\\.sh', 'back\\.sqreen\\.io', '\\.nr-data\\.net', '\\.newrelic\\.com']
+
+const DEFAULT_IGNORE_REGEXP = new RegExp(DEFAULT_IGNORE.join('|'))
 
 function trackableurl(domain: string) {
-  if (BEARER_URL.test(domain)) {
+  if (DEFAULT_IGNORE_REGEXP.test(domain)) {
     return false
   }
   if (Configuration.getConfig('reportHost') === domain) {
@@ -165,6 +167,7 @@ function trackableurl(domain: string) {
   }
   return true
 }
+
 const DEFAULT_FILTER = /authorization/i
 const FILTERED = '[FILTERED]'
 function filterObject(object: Record<string, any>) {
