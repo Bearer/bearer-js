@@ -21,6 +21,10 @@ describe('extractRequest', () => {
             "headers": Object {
               "somethind": "in-headers",
             },
+            "hostname": "foo.bearer.sh",
+            "path": "/nested/path",
+            "port": null,
+            "protocol": "https:",
             "query": "?queryParams=ok",
           },
           "url": "https://foo.bearer.sh/nested/path",
@@ -35,6 +39,10 @@ describe('extractRequest', () => {
           "method": "GET",
           "options": Object {
             "headers": Object {},
+            "hostname": "foo.bearer.sh",
+            "path": "/",
+            "port": null,
+            "protocol": "https:",
             "query": "",
           },
           "url": "https://foo.bearer.sh/",
