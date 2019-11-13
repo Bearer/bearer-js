@@ -50,7 +50,7 @@ export const hijack = (module: typeof http) => {
       const verboseData: VerboseParams = {}
 
       if (isVerbose) {
-        verboseData.requestHeaders = options.headers
+        verboseData.requestHeaders = filterObject(options.headers)
         // wont work for chunked body
         const _write = req.write
         req.write = function(chunk: Buffer) {
@@ -150,6 +150,26 @@ export function extractRequest(urlOrOptions: any, optionsOrCallback: any) {
       path: pathname
     }
   }
+}
+
+const DEFAULT_FILTER = /authorization/i
+const FILTERED = '[FILTERED]'
+function filterObject(object: Record<string, any>) {
+  return Object.keys(object).reduce(
+    (acc, key) => {
+      acc[key] = filteredKey(key) ? FILTERED : object[key]
+      return acc
+    },
+    {} as Record<string, any>
+  )
+}
+
+function filteredKey(key: string) {
+  if (DEFAULT_FILTER.test(key)) {
+    return true
+  }
+  // TODO: prepare regexp on initialization
+  return Configuration.getConfig('filtered').some((filter: string) => new RegExp(filter).test(key))
 }
 
 type VerboseParams = Omit<FullReportLog, keyof RestrictedReportLog>
