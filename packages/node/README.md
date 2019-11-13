@@ -15,7 +15,9 @@ Get your Bearer's [credentials](https://app.bearer.sh/keys) and setup Bearer as 
 ### Calling any APIs
 
 ```tsx
-import bearer from '@bearer/node'
+const bearer = require('@bearer/node')
+// or
+// import bearer from '@bearer/node'
 
 const client = bearer(process.env.BEARER_SECRET_KEY) // find it on https://app.bearer.sh/keys
 const github = client.integration('INTEGRATION_ID') // you'll find it on the Bearer's dashboard
@@ -58,7 +60,9 @@ console.log(response)
 By default bearer client times out after 5 seconds. Bearer allows to increase the timeout to up to 30 seconds
 
 ```tsx
-import bearer from '@bearer/node'
+const bearer = require('@bearer/node')
+// or
+// import bearer from '@bearer/node'
 
 const client = bearer(process.env.BEARER_SECRET_KEY, { httpClientSettings: { timeout: 10 * 1000 } }) // sets the timeout to 10 seconds
 const github = client.integration('INTEGRATION_ID', { httpClientSettings: { timeout: 1 } }) // sets the timeout to 1 second for this specific integration

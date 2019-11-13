@@ -13,8 +13,11 @@ Get your Bearer's [credentials](https://app.bearer.sh/keys) and setup Bearer as 
 
 ```tsx
 // your server.ts
-import express from 'express'
-import bearerWebhooks from '@bearer/express'
+const express = require('express')
+const bearerWebhooks = require('@bearer/express')
+// or
+// import express from 'express'
+// import bearerWebhooks from '@bearer/express'
 
 const app = express()
 
