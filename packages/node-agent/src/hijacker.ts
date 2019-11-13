@@ -157,7 +157,7 @@ function trackableurl(domain: string) {
   if (BEARER_URL.test(domain)) {
     return false
   }
-  if (Configuration.getConfig('report_host') === domain) {
+  if (Configuration.getConfig('reportHost') === domain) {
     return false
   }
   if (Configuration.getConfig('ignored').some((ignored: string) => ignored.includes(domain))) {

@@ -65,7 +65,7 @@ describe('Configuration', () => {
           filtered: ['filtere-from-file'],
           ignored: ['ignore.from.file'],
           logLevel: 'RESTRICTED',
-          report_host: 'https://agent.bearer.sh',
+          reportHost: 'agent.bearer.sh',
           secret: 'secret from file'
         })
       })
@@ -100,7 +100,7 @@ describe('Configuration', () => {
           filtered: ['custom-file-filter'],
           ignored: ['ignore.custom.location'],
           logLevel: 'RESTRICTED',
-          report_host: 'https://agent.bearer.sh',
+          reportHost: 'agent.bearer.sh',
           secret: 'secret from custom location'
         })
       })
@@ -135,8 +135,9 @@ describe('Configuration', () => {
             "foobar.com",
           ],
           "logLevel": "RESTRICTED",
-          "report_host": "https://agent.bearer.sh",
+          "reportHost": "agent.bearer.sh",
           "secret": "secret from env",
+          "throttleDisabled": false,
         }
       `)
     })

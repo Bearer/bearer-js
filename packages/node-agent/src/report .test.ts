@@ -11,7 +11,7 @@ describe('report', () => {
   beforeEach(() => {
     apiCall.mockClear()
 
-    nock('https://enpbfkbl19cks.x.pipedream.net')
+    nock('https://agent.bearer.sh')
       .post('/logs')
       .reply(apiCall)
   })
@@ -28,8 +28,8 @@ describe('report', () => {
     })
 
     test('enqueue and send report in batch', async done => {
-      enqueue({ whatever: 'data1' })
-      enqueue({ whatever: 'data2' })
+      enqueue({ whatever: 'data1' } as any)
+      enqueue({ whatever: 'data2' } as any)
 
       jest.runAllImmediates()
 

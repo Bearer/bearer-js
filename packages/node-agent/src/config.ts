@@ -91,7 +91,7 @@ type OptionName =
   | 'ignored'
   | 'logLevel'
   | 'filtered'
-  | 'report_host'
+  | 'reportHost'
   | 'throttleDisabled'
 
 type ConfigOption = {
@@ -133,9 +133,9 @@ const OPTIONS: Record<OptionName, ConfigOption> = {
     formatter: commaSeparatedListToArray,
     default: []
   },
-  report_host: {
+  reportHost: {
     key: 'BEARER_AGENT_REPORT_HOST',
-    default: 'https://agent.bearer.sh'
+    default: 'agent.bearer.sh'
   },
   throttleDisabled: {
     key: 'BEARER_AGENT_THROTTLE_DISABLED',

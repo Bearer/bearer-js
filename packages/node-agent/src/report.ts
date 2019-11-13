@@ -37,7 +37,7 @@ export function flush() {
   logger.debug('reporting %s items', reportItems.length)
   const req = https.request(
     {
-      hostname: Configuration.getConfig('report_host'),
+      hostname: Configuration.getConfig('reportHost'),
       port: 443,
       path: '/logs',
       method: 'POST',
