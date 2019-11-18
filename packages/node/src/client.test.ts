@@ -53,6 +53,32 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
         .reply(200, distantApi)
     }
 
+    const mockErrorRequest = ({ method, extraHeaders = {}, body }: IMockRequestParams) => {
+      nock('https://proxy.bearer.sh', {
+        reqheaders: {
+          authorization: secretKey,
+          ...headers,
+          ...extraHeaders
+        }
+      })
+        .intercept(`/${integrationName}/failing`, method, body)
+        .times(10)
+        .query(query)
+        .replyWithError({ message: 'error', code: 'ETIMEDOUT' })
+    }
+
+    it('retries the requests', async () => {
+      const client = clientFactory(secretKey, { host: 'https://proxy.bearer.sh', retrySettings: { maxRetryDelay: 10 } })
+
+      const api = client.integration(integrationName)
+      mockErrorRequest({ body, method: 'POST' })
+      expect.assertions(2)
+
+      await expect(api.post('/failing', { headers, query, body })).rejects.toMatchSnapshot()
+
+      expect(distantApi).not.toHaveBeenCalled()
+    })
+
     it('performs correct API calls', async () => {
       mockRequest({ body, method: 'POST' })
 

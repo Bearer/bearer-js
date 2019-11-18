@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bearer client #integration retries the requests 1`] = `
+Object {
+  "code": "ETIMEDOUT",
+  "columnNumber": undefined,
+  "config": Object {
+    "adapter": [Function],
+    "baseURL": "https://proxy.bearer.sh/12345",
+    "data": "{\\"body\\":\\"data\\"}",
+    "headers": Object {
+      "Accept": "application/json, text/plain, */*",
+      "Authorization": "spongeBobApiKey",
+      "Content-Length": 15,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": "Bearer-Node (2.0.1)",
+    },
+    "maxContentLength": -1,
+    "method": "post",
+    "params": Object {
+      "sponge": "bob",
+    },
+    "timeout": 5000,
+    "transformRequest": Array [
+      [Function],
+    ],
+    "transformResponse": Array [
+      [Function],
+    ],
+    "url": "https://proxy.bearer.sh/12345/failing",
+    "validateStatus": [Function],
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+  },
+  "description": undefined,
+  "fileName": undefined,
+  "lineNumber": undefined,
+  "message": "error",
+  "name": undefined,
+  "number": undefined,
+  "stack": undefined,
+}
+`;
