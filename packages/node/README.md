@@ -72,4 +72,4 @@ const github = client.integration('INTEGRATION_ID', { httpClientSettings: { time
 
 _Note 1_: we are using [axios](https://github.com/axios/axios) as the http client. Each `.get()`, `.post()`, `.put()`, ... or `.invoke()` returns an Axios Promise.
 
-_Note 2_: If you are using ExpressJS, have a look at the [@bearer/express](https://github.com/Bearer/bearer/tree/master/packages/express) client
+_Note 2_: If you are using ExpressJS, have a look at the [@bearer/express](https://github.com/Bearer/bearer-js/tree/master/packages/express) client
