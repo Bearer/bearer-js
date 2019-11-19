@@ -66,14 +66,7 @@ const bearer = require('@bearer/node')
 
 const client = bearer(process.env.BEARER_SECRET_KEY, { httpClientSettings: { timeout: 10 * 1000 } }) // sets the timeout to 10 seconds
 const github = client.integration('INTEGRATION_ID', { httpClientSettings: { timeout: 1 } }) // sets the timeout to 1 second for this specific integration
-
-github
-  .invoke('myFunction')
-  .then(console.log)
-  .catch(console.error)
 ```
-
-[Learn more](https://docs.bearer.sh/working-with-bearer/manipulating-apis) on how to use custom functions with Bearer.sh.
 
 ## Notes
 
