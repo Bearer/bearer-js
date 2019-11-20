@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/Bearer/bearer-js/compare/v2.1.1...v2.2.0) (2019-11-20)
+
+
+### Features
+
+* **node:** add support for fetching auth details ([6f9d0fc](https://github.com/Bearer/bearer-js/commit/6f9d0fc))
+
+
+
+
+
 ## [2.1.1](https://github.com/Bearer/bearer-js/compare/v2.1.0...v2.1.1) (2019-11-13)
 
 
