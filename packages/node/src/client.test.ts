@@ -145,5 +145,114 @@ You'll find you API key at this location: https://app.bearer.sh/keys`
         expect(data).toEqual(okResponse)
       })
     })
+
+    describe('getAuth', () => {
+      const authId = 'test-auth-id'
+
+      const mockRequest = (data: any) => {
+        nock('https://auth.bearer.sh', {
+          reqheaders: {
+            authorization: secretKey,
+            ...headers
+          }
+        })
+          .get(`/apis/${integrationName}/auth/${authId}`)
+          .once()
+          .reply(200, data)
+      }
+
+      it('raises an error when there is no auth id set', async () => {
+        expect(api.getAuth()).rejects.toMatchSnapshot()
+      })
+
+      describe('OAuth 1', () => {
+        const details = {
+          callbackParams: { oauth_token: 'test-token', oauth_verifier: 'test-verifier' },
+          consumerKey: 'test-consumer-key',
+          consumerSecret: 'test-secret',
+          signatureMethod: 'HMAC-SHA1',
+          tokenSecret: 'test-token-secret',
+          accessToken: {
+            active: true,
+            value: 'test-token',
+            client_id: 'test-consumer-key',
+            iat: 1574087265,
+            token_type: 'oauth'
+          }
+        }
+
+        it('fetches the auth details and translates them to a friendly format', async () => {
+          mockRequest(details)
+
+          const authDetails = await api.auth(authId).getAuth()
+
+          expect(authDetails).toMatchSnapshot()
+        })
+      })
+
+      describe('OAuth 2', () => {
+        const minimalDetails = {
+          callbackParams: {
+            code: 'test-code'
+          },
+          clientID: 'test-client-id',
+          clientSecret: 'test-secret',
+          tokenResponse: {
+            headers: { 'content-type': 'application/json' },
+            body: { access_token: 'test-access-token' }
+          },
+          accessToken: {
+            active: true,
+            value: 'test-access-token',
+            client_id: 'test-client-id',
+            iat: 1573661439,
+            token_type: 'bearer'
+          }
+        }
+
+        const fullDetails = {
+          ...minimalDetails,
+          accessToken: {
+            ...minimalDetails.accessToken,
+            exp: 1573665039,
+            scope: 'read write'
+          },
+          idToken: {
+            active: true,
+            value: 'test-id-token',
+            client_id: 'test-client-id',
+            iat: 1573661439,
+            token_type: 'id'
+          },
+          idTokenJwt: {
+            some: 'id-data'
+          },
+          refreshToken: {
+            active: true,
+            value: 'test-refresh-token',
+            client_id: 'test-client-id',
+            iat: 1573661439,
+            scope: 'read write',
+            token_type: 'refresh'
+          }
+        }
+
+        it('fetches the auth details and translates them to a friendly format', async () => {
+          mockRequest(fullDetails)
+
+          const authDetails = await api.auth(authId).getAuth()
+
+          expect(authDetails).toMatchSnapshot()
+        })
+
+        it('works when optional values are missing', async () => {
+          mockRequest(minimalDetails)
+
+          const authDetails = await api.auth(authId).getAuth()
+
+          expect(authDetails).toMatchSnapshot()
+        })
+      })
+    })
   })
 })

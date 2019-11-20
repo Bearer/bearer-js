@@ -1,18 +1,24 @@
 import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from 'axios'
 import { createLogger, format, transports, Logger } from 'winston'
 
+import { AuthDetails, translateAuthDetails } from './auth-details'
+
 const { combine, timestamp, label, prettyPrint } = format
 const DEFAULT_TIMEOUT = 5 * 1000 // 5 seconds
+
+const pkg = require('../package.json')
+const userAgent = `Bearer-Node (${pkg.version})`
 
 // TODO: write documentation
 class Bearer {
   protected readonly secretKey: string
   protected options: BearerClientOptions = {
+    authHost: 'https://auth.bearer.sh',
     host: 'https://proxy.bearer.sh',
     httpClientSettings: { timeout: DEFAULT_TIMEOUT }
   }
 
-  constructor(secretKey: string, options?: BearerClientOptions) {
+  constructor(secretKey: string, options?: Partial<BearerClientOptions>) {
     this.options = { ...this.options, ...options }
     this.secretKey = secretKey
   }
@@ -69,6 +75,27 @@ export class BearerClient {
   public authenticate = this.auth // Alias
 
   /**
+   * `getAuth` retrieve the auth information (eg. access token) for the current identity.
+   *
+   * You must call `auth` prior to calling this function
+   */
+  public getAuth = async (): Promise<AuthDetails> => {
+    if (!this.authId) {
+      throw new MissingAuthId()
+    }
+
+    const url = `${this.options.authHost}/apis/${this.integrationId}/auth/${this.authId}`
+    const response = await this.client.get(url, {
+      headers: {
+        Authorization: this.secretKey,
+        'User-Agent': userAgent
+      }
+    })
+
+    return translateAuthDetails(response.data)
+  }
+
+  /**
    * HTTP methods
    */
 
@@ -106,10 +133,9 @@ export class BearerClient {
       throw new InvalidRequestOptions()
     }
 
-    const pkg = require('../package.json')
     const preheaders: BearerHeaders = {
       Authorization: this.secretKey,
-      'User-Agent': `Bearer-Node (${pkg.version})`,
+      'User-Agent': userAgent,
       'Bearer-Auth-Id': this.authId!,
       'Bearer-Setup-Id': this.setupId!
     }
@@ -171,7 +197,13 @@ interface BearerRequestParameters {
 }
 
 type BearerRequestOptions = any
-type BearerClientOptions = { host: string; timeout?: number; httpClientSettings: AxiosRequestConfig }
+
+interface BearerClientOptions {
+  authHost: string
+  host: string
+  timeout?: number
+  httpClientSettings: AxiosRequestConfig
+}
 
 /**
  * Errors handling
@@ -188,6 +220,12 @@ class InvalidRequestOptions extends Error {
   constructor() {
     super(`Unable to trigger API request. Request parameters should be an object \
 in the form "{ headers: { "Foo": "bar" }, body: "My body" }"`)
+  }
+}
+
+class MissingAuthId extends Error {
+  constructor() {
+    super('No authId has been set. Please call `auth`')
   }
 }
 

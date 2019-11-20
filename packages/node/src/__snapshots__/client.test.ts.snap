@@ -1,0 +1,187 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bearer client #integration getAuth OAuth 1 fetches the auth details and translates them to a friendly format 1`] = `
+Object {
+  "accessToken": TokenData {
+    "active": true,
+    "clientID": "test-consumer-key",
+    "expiresAt": undefined,
+    "issuedAt": 2019-11-18T14:27:45.000Z,
+    "scopes": undefined,
+    "tokenType": "oauth",
+    "value": "test-token",
+  },
+  "callbackParams": Object {
+    "oauth_token": "test-token",
+    "oauth_verifier": "test-verifier",
+  },
+  "consumerKey": "test-consumer-key",
+  "consumerSecret": "test-secret",
+  "rawData": Object {
+    "accessToken": Object {
+      "active": true,
+      "client_id": "test-consumer-key",
+      "iat": 1574087265,
+      "token_type": "oauth",
+      "value": "test-token",
+    },
+    "callbackParams": Object {
+      "oauth_token": "test-token",
+      "oauth_verifier": "test-verifier",
+    },
+    "consumerKey": "test-consumer-key",
+    "consumerSecret": "test-secret",
+    "signatureMethod": "HMAC-SHA1",
+    "tokenSecret": "test-token-secret",
+  },
+  "signatureMethod": "HMAC-SHA1",
+  "tokenSecret": "test-token-secret",
+}
+`;
+
+exports[`Bearer client #integration getAuth OAuth 2 fetches the auth details and translates them to a friendly format 1`] = `
+Object {
+  "accessToken": TokenData {
+    "active": true,
+    "clientID": "test-client-id",
+    "expiresAt": 2019-11-13T17:10:39.000Z,
+    "issuedAt": 2019-11-13T16:10:39.000Z,
+    "scopes": Array [
+      "read",
+      "write",
+    ],
+    "tokenType": "bearer",
+    "value": "test-access-token",
+  },
+  "callbackParams": Object {
+    "code": "test-code",
+  },
+  "clientID": "test-client-id",
+  "clientSecret": "test-secret",
+  "idToken": TokenData {
+    "active": true,
+    "clientID": "test-client-id",
+    "expiresAt": undefined,
+    "issuedAt": 2019-11-13T16:10:39.000Z,
+    "scopes": undefined,
+    "tokenType": "id",
+    "value": "test-id-token",
+  },
+  "idTokenJwt": Object {
+    "some": "id-data",
+  },
+  "rawData": Object {
+    "accessToken": Object {
+      "active": true,
+      "client_id": "test-client-id",
+      "exp": 1573665039,
+      "iat": 1573661439,
+      "scope": "read write",
+      "token_type": "bearer",
+      "value": "test-access-token",
+    },
+    "callbackParams": Object {
+      "code": "test-code",
+    },
+    "clientID": "test-client-id",
+    "clientSecret": "test-secret",
+    "idToken": Object {
+      "active": true,
+      "client_id": "test-client-id",
+      "iat": 1573661439,
+      "token_type": "id",
+      "value": "test-id-token",
+    },
+    "idTokenJwt": Object {
+      "some": "id-data",
+    },
+    "refreshToken": Object {
+      "active": true,
+      "client_id": "test-client-id",
+      "iat": 1573661439,
+      "scope": "read write",
+      "token_type": "refresh",
+      "value": "test-refresh-token",
+    },
+    "tokenResponse": Object {
+      "body": Object {
+        "access_token": "test-access-token",
+      },
+      "headers": Object {
+        "content-type": "application/json",
+      },
+    },
+  },
+  "refreshToken": TokenData {
+    "active": true,
+    "clientID": "test-client-id",
+    "expiresAt": undefined,
+    "issuedAt": 2019-11-13T16:10:39.000Z,
+    "scopes": Array [
+      "read",
+      "write",
+    ],
+    "tokenType": "refresh",
+    "value": "test-refresh-token",
+  },
+  "tokenResponse": Object {
+    "body": Object {
+      "access_token": "test-access-token",
+    },
+    "headers": Object {
+      "content-type": "application/json",
+    },
+  },
+}
+`;
+
+exports[`Bearer client #integration getAuth OAuth 2 works when optional values are missing 1`] = `
+Object {
+  "accessToken": TokenData {
+    "active": true,
+    "clientID": "test-client-id",
+    "expiresAt": undefined,
+    "issuedAt": 2019-11-13T16:10:39.000Z,
+    "scopes": Array [],
+    "tokenType": "bearer",
+    "value": "test-access-token",
+  },
+  "callbackParams": Object {
+    "code": "test-code",
+  },
+  "clientID": "test-client-id",
+  "clientSecret": "test-secret",
+  "rawData": Object {
+    "accessToken": Object {
+      "active": true,
+      "client_id": "test-client-id",
+      "iat": 1573661439,
+      "token_type": "bearer",
+      "value": "test-access-token",
+    },
+    "callbackParams": Object {
+      "code": "test-code",
+    },
+    "clientID": "test-client-id",
+    "clientSecret": "test-secret",
+    "tokenResponse": Object {
+      "body": Object {
+        "access_token": "test-access-token",
+      },
+      "headers": Object {
+        "content-type": "application/json",
+      },
+    },
+  },
+  "tokenResponse": Object {
+    "body": Object {
+      "access_token": "test-access-token",
+    },
+    "headers": Object {
+      "content-type": "application/json",
+    },
+  },
+}
+`;
+
+exports[`Bearer client #integration getAuth raises an error when there is no auth id set 1`] = `[Error: No authId has been set. Please call \`auth\`]`;
