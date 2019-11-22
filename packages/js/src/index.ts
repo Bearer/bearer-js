@@ -1,5 +1,5 @@
 import bearer, { TBearer } from './lib/main'
-import BearerInstance from './lib/bearer'
+import BearerExemplar from './lib/bearer'
 export type Bearer = TBearer
-export type BearerInstance = BearerInstance
+export type BearerInstance = BearerExemplar
 export default bearer
