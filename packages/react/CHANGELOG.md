@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+
+
+**Note:** Version bump only for package @bearer/react
+
+
+
+
+
 # [2.1.0](https://github.com/Bearer/bearer-js/compare/v2.0.1...v2.1.0) (2019-10-28)
 
 

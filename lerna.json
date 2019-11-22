@@ -1,21 +1,15 @@
 {
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "packages": [
-    "packages/*"
-  ],
-  "version": "2.2.0",
+  "packages": ["packages/*"],
+  "version": "2.2.1",
   "command": {
     "version": {
       "npmClient": "npm"
     },
     "publish": {
       "npmClient": "npm",
-      "ignoreChanges": [
-        "*.md",
-        "**/__tests__/**",
-        "**/test/**"
-      ]
+      "ignoreChanges": ["*.md", "**/__tests__/**", "**/test/**"]
     }
   },
   "lerna": "3.10.6"
