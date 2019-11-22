@@ -65,7 +65,12 @@ steps:
   - name: release
     image: node:10
     commands:
-      - git checkout  -b master
+      - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - git fetch origin master
+      - git checkout master
+      - git config --global user.email "engineering@bearer.sh"
+      - git config --global user.name "Bearer engineering CI/CD"
+      - git remote set-url origin https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/Bearer/bearer-js.git
       - yarn lerna-publish --dist-tag=next --yes
 
 trigger:

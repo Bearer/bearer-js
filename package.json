@@ -14,7 +14,6 @@
     ".drone.yml": [
       "yarn drone:fmt",
       "yarn drone:lint",
-      "cross-env-shell SERVER=$DRONE_SERVER TOKEN=$DRONE_TOKEN \"yarn drone:sign\"",
       "git add"
     ],
     "*.{md}": [
